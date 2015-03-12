@@ -7,6 +7,7 @@ package eds.utilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +18,7 @@ import javax.persistence.Entity;
  *
  * @author vincent.a.lee
  */
-public class EntityExplorer {
+public class EntityExplorer implements Serializable {
     
     public static List<Class> getClasses(String packageName) throws Exception {
         File directory = null;

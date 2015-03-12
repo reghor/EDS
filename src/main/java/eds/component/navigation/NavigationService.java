@@ -121,7 +121,7 @@ public class NavigationService implements Serializable {
      * @throws DBConnectionException 
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public MenuItem createMenuItem(String name, String requestUrl, long parentMenuItemId)
+    public MenuItem createMenuItem(String name, String requestUrl, long parentMenuItemId, String prependHTMLTags)
             throws CreateMenuItemException, DBConnectionException {
         
         try {
@@ -145,7 +145,7 @@ public class NavigationService implements Serializable {
             newMenuItem.setMENU_ITEM_NAME(name);
             newMenuItem.setPARENT_MENU_ITEM(parentMenuItem);
             newMenuItem.setMENU_ITEM_URL(requestUrl);
-            
+            newMenuItem.setPREPEND_TAGS(prependHTMLTags);
             //em.getTransaction().begin();
             em.persist(newMenuItem);
             //em.getTransaction().commit();

@@ -33,7 +33,7 @@ public class HibernateEMServices implements Serializable {
     @PersistenceContext(name="HIBERNATE")
     private EntityManager em;
     
-    @EJB private EntityExplorer entityExplorer;
+    //private EntityExplorer entityExplorer;
     
     public EntityManager getEM() {
         //EntityManagerFactory emf = Persistence.createEntityManagerFactory("HIBERNATE");//, this.createFullConfig().getProperties());
