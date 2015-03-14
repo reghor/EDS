@@ -20,7 +20,7 @@ public class DefaultFilenameListener {
     
     @PrePersist
     @PreUpdate
-    public void defaultFilename(FileEntity file){
+    public void defaultFilename(SecaFileEntity file){
         //If filename is not set, empty or contains only whitespaces, give it the 
         //default filename
         if(file.getFILENAME() == null ||

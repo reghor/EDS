@@ -5,6 +5,7 @@
  */
 package eds.component.file;
 
+import eds.component.data.DBConnectionException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,16 +19,22 @@ import java.util.concurrent.Future;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import eds.component.data.HibernateUtil;
-import eds.entity.file.FileEntity;
-import static eds.entity.file.FileEntity.FILE_STATUS.COMPLETED;
-import eds.entity.file.FileSequence;
+import eds.entity.FileEntity;
+import eds.entity.file.SecaFileEntity;
+import static eds.entity.file.SecaFileEntity.FILE_STATUS.COMPLETED;
+import eds.entity.file.SecaFileSequence;
 import javax.ejb.EJB;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
+import org.hibernate.exception.GenericJDBCException;
 
 /**
  *
@@ -39,10 +46,15 @@ public class FileService {
     private final long MAX_RECORD_FLUSH = 100000;
     private final long MAX_FLUSH_COMMIT = 3;
 
+    private final long MAX_FILE_SIZE = (long) Math.pow(2, 28);
+
     @EJB
     private HibernateUtil hibernateUtil;
 
     private Session session;
+
+    @PersistenceContext(name = "HIBERNATE")
+    private EntityManager em;
 
     /**
      * Checks if filename already exist
@@ -52,11 +64,11 @@ public class FileService {
      * @param file
      * @return
      */
-    public FileEntity checkFileExists(FileEntity file) {
+    public SecaFileEntity checkFileExists(SecaFileEntity file) {
         if (session == null || !session.isOpen()) {
             session = hibernateUtil.getSession();
         }
-        List<FileEntity> results;
+        List<SecaFileEntity> results;
         String hashValueQuery = "SELECT file "
                 + "FROM FileEntity file "
                 + "WHERE "
@@ -73,11 +85,11 @@ public class FileService {
         }
     }
 
-    public List<FileEntity> searchFileByName(String searchName) {
+    public List<SecaFileEntity> searchFileByName(String searchName) {
         if (session == null || !session.isOpen()) {
             session = hibernateUtil.getSession();
         }
-        List<FileEntity> results = session.createCriteria(FileEntity.class)
+        List<SecaFileEntity> results = session.createCriteria(SecaFileEntity.class)
                 .add(Restrictions.ilike("FILENAME", "%" + searchName + "%"))
                 //.add(Restrictions.ge("DATE_CREATED", searchStartDate))
                 //.add(Restrictions.le("DATE_CREATED", searchEndDate))
@@ -86,11 +98,11 @@ public class FileService {
         return results;
     }
 
-    public List<FileSequence> getSequences(long fileId, long start, long end) {
+    public List<SecaFileSequence> getSequences(long fileId, long start, long end) {
         if (session == null || !session.isOpen()) {
             session = hibernateUtil.getSession();
         }
-        List<FileSequence> results = session.createCriteria(FileSequence.class)
+        List<SecaFileSequence> results = session.createCriteria(SecaFileSequence.class)
                 .add(Restrictions.eq("FILE.FILE_ID", fileId))
                 .add(Restrictions.ge("ORIGINAL_LINE_NUM", start))
                 .add(Restrictions.le("ORIGINAL_LINE_NUM", end))
@@ -100,20 +112,20 @@ public class FileService {
     }
 
     @Asynchronous
-    public Future<String> testAsyncInsertion(String jobname,FileEntity holdingFile, InputStream is) throws IOException{
+    public Future<String> testAsyncInsertion(String jobname, SecaFileEntity holdingFile, InputStream is) throws IOException {
         this.insertFileAndSequences(holdingFile, is);
-        
+
         return new AsyncResult<String>(jobname);
     }
-    
-    public void insertFileAndSequences(FileEntity holdingFile, InputStream is) throws IOException {
+
+    public void insertFileAndSequences(SecaFileEntity holdingFile, InputStream is) throws IOException {
         System.out.println(holdingFile.getFILENAME());
         DateTime startTime = new DateTime();
-        
+
         if (session == null || !session.isOpen()) {
             session = hibernateUtil.getSession();
         }
-        FileEntity insertThisFile = holdingFile;
+        SecaFileEntity insertThisFile = holdingFile;
 
         //resume from the sequence number where the upload has stopped
         BufferedReader bReader = new BufferedReader(new InputStreamReader(is));
@@ -130,7 +142,7 @@ public class FileService {
             if (++lineNum <= insertThisFile.getLAST_SEQUENCE()) {
                 continue; //skip to the last inserted sequence
             }
-            FileSequence nextSequence = this.addSequence(insertThisFile, lineSequence);
+            SecaFileSequence nextSequence = this.addSequence(insertThisFile, lineSequence);
             session.save(nextSequence);
             if (insertThisFile.getLAST_SEQUENCE() % MAX_RECORD_FLUSH == 0) {
                 System.out.println("Flush at: " + lineSequence);
@@ -154,7 +166,7 @@ public class FileService {
         System.out.println("Start at " + startTime + " and End at " + endTime);
     }
 
-    public FileSequence addSequence(FileEntity file, FileSequence sequence) {
+    public SecaFileSequence addSequence(SecaFileEntity file, SecaFileSequence sequence) {
         if (file.getUPLOAD_STATUS() == COMPLETED) {
             throw new RuntimeException("File " + file.getFILENAME() + " has completed uploading and cannot be overwritten. "
                     + "Please delete file and re-upload again.");
@@ -166,17 +178,17 @@ public class FileService {
         sequence.setORIGINAL_LINE_NUM(file.getLAST_SEQUENCE());
         sequence.setCURRENT_LINE_NUM(file.getLAST_SEQUENCE());
         if (file.getNUM_OF_SEQUENCE() <= file.getLAST_SEQUENCE()) {
-            file.setUPLOAD_STATUS(FileEntity.FILE_STATUS.COMPLETED);
+            file.setUPLOAD_STATUS(SecaFileEntity.FILE_STATUS.COMPLETED);
         }
         return sequence;
     }
 
     ;
     
-    public FileSequence addSequence(FileEntity file, String sequenceContent) {
-        FileSequence sequence = new FileSequence();
+    public SecaFileSequence addSequence(SecaFileEntity file, String sequenceContent) {
+        SecaFileSequence sequence = new SecaFileSequence();
         sequence.setSEQUENCE_CONTENT(sequenceContent);
-        sequence.setSTATUS(FileSequence.SEQUENCE_STATUS.ACTIVE);
+        sequence.setSTATUS(SecaFileSequence.SEQUENCE_STATUS.ACTIVE);
         return addSequence(file, sequence);
     }
 
@@ -190,20 +202,19 @@ public class FileService {
      * <li>2) Compute checksum</li>
      * <li>3) Initialize file</li>
      * </ul>
-     * In light of best practices, this is not a good implementation, but we did 
+     * In light of best practices, this is not a good implementation, but we did
      * it for the purpose of performance.
      * <p>
      * @param filename
      * @param is
      * @return
-     * @throws EDS.component.file.FileOperationException
      */
-    public FileEntity checkLengthAndComputeChecksum(String filename, InputStream is) throws FileOperationException, InvalidFileException {
-        FileEntity checkedFile;
+    public SecaFileEntity checkLengthAndComputeChecksum(String filename, InputStream is) throws FileOperationException, InvalidFileException {
+        SecaFileEntity checkedFile;
         String md5Checksum = "";
         int lineNum = 0;
         //long fileSize = uploadedFile.getSize();
-        try{
+        try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             //InputStream is = uploadedFile.getInputstream();
             DigestInputStream dis = new DigestInputStream(is, md);
@@ -223,31 +234,62 @@ public class FileService {
             byte[] digest = md.digest();
             md5Checksum = String.format("%032x", new BigInteger(digest));
             System.out.println("MD5 hash: " + md5Checksum);
-            
+
             //initialize temp FileEntity set all variables to proceed with the remaining checks
             checkedFile = this.createNewFile(filename);
             //checkedFile.setFILE_SIZE_BYTE(fileSize);
             checkedFile.setNUM_OF_SEQUENCE(lineNum);
             checkedFile.setMD5_HASH(md5Checksum);
             checkedFile.setLINE_SIZE(prevLineSize);
-            
-        } catch(NoSuchAlgorithmException nsaex){
-             throw new FileOperationException("Checksum error!",nsaex);
-        } catch (IOException ioex){
-            throw new FileOperationException("Input stream I/O error!",ioex);
-        } 
+
+        } catch (NoSuchAlgorithmException nsaex) {
+            throw new FileOperationException("Checksum error!", nsaex);
+        } catch (IOException ioex) {
+            throw new FileOperationException("Input stream I/O error!", ioex);
+        }
         return checkedFile;
     }
 
-    public FileEntity createNewFile(String filename) {
-        FileEntity fileEntity = new FileEntity();
+    public SecaFileEntity createNewFile(String filename) {
+        SecaFileEntity fileEntity = new SecaFileEntity();
         fileEntity.setFILENAME(filename);
         fileEntity.setNUM_OF_SEQUENCE(0);
         fileEntity.setFILE_SIZE_BYTE(0);
         fileEntity.setLAST_SEQUENCE(0);
         fileEntity.setREMAINING_SEQUENCE(0);
-        fileEntity.setUPLOAD_STATUS(FileEntity.FILE_STATUS.INCOMPLETE);
+        fileEntity.setUPLOAD_STATUS(SecaFileEntity.FILE_STATUS.INCOMPLETE);
 
         return fileEntity;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public long uploadFile(String filename, byte[] file)
+            throws FileOperationException, DBConnectionException {
+
+        try {
+            //Do basic file checks
+            if (file.length > MAX_FILE_SIZE) {
+                throw new FileOperationException("File size exceeds maximum of " + MAX_FILE_SIZE + " bytes!");
+            }
+
+            FileEntity newFile = new FileEntity();
+            newFile.setNAME(filename);
+            newFile.setCONTENT(file);
+            //MD5 checksum to be in later
+
+            this.em.persist(newFile);
+            //Return newFile's FILE_ID so that other services/programs can get the generated FILE_ID
+            return newFile.getFILE_ID();
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                //throw new DBConnectionException(pex.getCause().getMessage());
+                throw new DBConnectionException();
+            }
+            throw new FileOperationException(pex.getMessage());
+        } catch (Exception ex) {
+            throw new FileOperationException(ex.getMessage());
+        }
+
     }
 }

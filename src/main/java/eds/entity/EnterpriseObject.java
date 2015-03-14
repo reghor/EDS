@@ -27,9 +27,10 @@ import javax.persistence.TableGenerator;
 @Table(name="ENTERPRISEOBJECT")
 @Inheritance(strategy=InheritanceType.JOINED)
 @DiscriminatorColumn(name="OBJECT_TYPE")
-@TableGenerator(name="ENTERPRISEUNIT_SEQ",initialValue=1,allocationSize=10,table="SEQUENCE")
+@TableGenerator(name="ENTERPRISE_OBJECT_SEQ",initialValue=1,allocationSize=10,table="SEQUENCE")
 @EntityListeners(AuditedObjectListener.class)
-public abstract class EnterpriseObject implements Serializable, Comparable<EnterpriseObject> {
+public abstract class EnterpriseObject extends AuditedObject
+        implements Serializable, Comparable<EnterpriseObject> {
     
     protected long OBJECTID;
     protected String OBJECT_NAME;
@@ -44,12 +45,9 @@ public abstract class EnterpriseObject implements Serializable, Comparable<Enter
     /*@Id*/ protected java.sql.Date END_DATE;
     
     protected String SEARCH_TERM;
-    protected java.sql.Date DATE_CHANGED;
-    protected String CHANGED_BY;
-    protected Date DATE_CREATED;
-    protected String CREATED_BY;
+    
 
-    @Id @GeneratedValue(generator="ENTERPRISEUNIT_SEQ",strategy=GenerationType.TABLE) 
+    @Id @GeneratedValue(generator="ENTERPRISE_OBJECT_SEQ",strategy=GenerationType.TABLE) 
     public long getOBJECTID() {
         return OBJECTID;
     }
@@ -88,38 +86,6 @@ public abstract class EnterpriseObject implements Serializable, Comparable<Enter
 
     public void setSEARCH_TERM(String SEARCH_TERM) {
         this.SEARCH_TERM = SEARCH_TERM;
-    }
-
-    public Date getDATE_CHANGED() {
-        return DATE_CHANGED;
-    }
-
-    public void setDATE_CHANGED(Date DATE_CHANGED) {
-        this.DATE_CHANGED = DATE_CHANGED;
-    }
-
-    public String getCHANGED_BY() {
-        return CHANGED_BY;
-    }
-
-    public void setCHANGED_BY(String CHANGED_BY) {
-        this.CHANGED_BY = CHANGED_BY;
-    }
-
-    public Date getDATE_CREATED() {
-        return DATE_CREATED;
-    }
-
-    public void setDATE_CREATED(Date DATE_CREATED) {
-        this.DATE_CREATED = DATE_CREATED;
-    }
-
-    public String getCREATED_BY() {
-        return CREATED_BY;
-    }
-
-    public void setCREATED_BY(String CREATED_BY) {
-        this.CREATED_BY = CREATED_BY;
     }
     
     public abstract void randInit();

@@ -221,7 +221,7 @@ public class ProgramService implements Serializable {
 
             criteria.multiselect(
                     sourceEntity.get(Program_.VIEW_DIRECTORY),
-                    sourceEntity.get(Program_.VIEW_ROOT)); // SELECT *
+                    sourceEntity.get(Program_.VIEW_ROOT)); // SELECT VIEW_DIRECTORY, VIEW_ROOT
             
             criteria.where(builder.equal(sourceEntity.get(Program_.PROGRAM_NAME), programName)); // WHERE
 

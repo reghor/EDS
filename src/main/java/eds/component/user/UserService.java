@@ -493,6 +493,7 @@ public class UserService extends Service {
             throw ex;
         }
     }
+    
 
     /**
      * Helper method

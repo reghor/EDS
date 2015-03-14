@@ -17,22 +17,22 @@ import javax.inject.Named;
 @Named("fileList")
 public class FileListBean {
 
-    private List<FileEntity> files;
-    private List<FileEntity> largeFiles;
-    private List<FileSequence> sequences;
+    private List<SecaFileEntity> files;
+    private List<SecaFileEntity> largeFiles;
+    private List<SecaFileSequence> sequences;
 
     public FileListBean() {
 
-        sequences = new ArrayList<FileSequence>();
+        sequences = new ArrayList<SecaFileSequence>();
         //Players  
-        files = new ArrayList<FileEntity>();
-        FileEntity file1 = new FileEntity();
-        FileEntity file2 = new FileEntity();
-        FileEntity file3 = new FileEntity();
-        FileEntity file4 = new FileEntity();
-        FileEntity file5 = new FileEntity();
-        FileEntity file6 = new FileEntity();
-        FileEntity file7 = new FileEntity();
+        files = new ArrayList<SecaFileEntity>();
+        SecaFileEntity file1 = new SecaFileEntity();
+        SecaFileEntity file2 = new SecaFileEntity();
+        SecaFileEntity file3 = new SecaFileEntity();
+        SecaFileEntity file4 = new SecaFileEntity();
+        SecaFileEntity file5 = new SecaFileEntity();
+        SecaFileEntity file6 = new SecaFileEntity();
+        SecaFileEntity file7 = new SecaFileEntity();
         /*file1.randInit();file1.setFILENAME("7 liner 1");file1.setCREATED_BY("Alex");
         file2.randInit();file2.setFILENAME("6 liner 1");file2.setCREATED_BY("Alex");
         file3.randInit();file3.setFILENAME("6 liner 2");file3.setCREATED_BY("Alex");
@@ -49,9 +49,9 @@ public class FileListBean {
         files.add(file6);
         files.add(file7);
         
-        largeFiles = new ArrayList<FileEntity>();
+        largeFiles = new ArrayList<SecaFileEntity>();
         for(int i=0;i<100;i++){
-            FileEntity fileTemp = new FileEntity();
+            SecaFileEntity fileTemp = new SecaFileEntity();
             //fileTemp.randInit();fileTemp.setFILENAME("X liner "+i);//fileTemp.setCREATED_BY("Alex");
             largeFiles.add(fileTemp);
         }
@@ -62,7 +62,7 @@ public class FileListBean {
             if(i<10)
                 num = " ".concat(num);
             String addSequence = initialSequence.concat(" \"").concat(num).concat("\"");
-            FileSequence fs = new FileSequence();
+            SecaFileSequence fs = new SecaFileSequence();
             //fs.randInit();
             //fs.setSEQUENCE_LINE(addSequence);
             //fs.setSEQNUM(sequence_index++);
@@ -70,27 +70,27 @@ public class FileListBean {
         }
     }
 
-    public List<FileEntity> getFiles() {
+    public List<SecaFileEntity> getFiles() {
         return files;
     }
 
-    public void setPlayers(List<FileEntity> files) {
+    public void setPlayers(List<SecaFileEntity> files) {
         this.files = files;
     }
 
-    public List<FileEntity> getLargeFiles() {
+    public List<SecaFileEntity> getLargeFiles() {
         return largeFiles;
     }
 
-    public void setLargeFiles(List<FileEntity> largeFiles) {
+    public void setLargeFiles(List<SecaFileEntity> largeFiles) {
         this.largeFiles = largeFiles;
     }
 
-    public List<FileSequence> getSequences() {
+    public List<SecaFileSequence> getSequences() {
         return sequences;
     }
 
-    public void setSequences(List<FileSequence> sequences) {
+    public void setSequences(List<SecaFileSequence> sequences) {
         this.sequences = sequences;
     }
     

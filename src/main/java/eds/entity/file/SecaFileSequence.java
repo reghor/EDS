@@ -20,9 +20,9 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="FILESEQUENCE")
-public class FileSequence implements Serializable /*extends EnterpriseData*/ {
+public class SecaFileSequence implements Serializable /*extends EnterpriseData*/ {
 
-    private FileEntity FILE;
+    private SecaFileEntity FILE;
     private long ORIGINAL_LINE_NUM;
     private long CURRENT_LINE_NUM;
     private String SEQUENCE_CONTENT;
@@ -34,11 +34,11 @@ public class FileSequence implements Serializable /*extends EnterpriseData*/ {
     }
 
     @Id @ManyToOne
-    public FileEntity getFILE() {
+    public SecaFileEntity getFILE() {
         return FILE;
     }
 
-    public void setFILE(FileEntity FILE) {
+    public void setFILE(SecaFileEntity FILE) {
         this.FILE = FILE;
     }
 

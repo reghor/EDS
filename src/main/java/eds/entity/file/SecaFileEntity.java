@@ -42,7 +42,7 @@ import org.joda.time.LocalDate;
 @Table(name="FILEENTITY")
 @DiscriminatorValue("FILEENTITY") //for EDS
 @TableGenerator(name="FILEENTITY_SEQ",initialValue=1,allocationSize=1,table="SEQUENCE") //No uploads of multiple files, so allocationSize 1 is fine
-public class FileEntity implements Serializable /*extends EnterpriseUnit*/ {
+public class SecaFileEntity implements Serializable /*extends EnterpriseUnit*/ {
 
     private long FILE_ID;
     private String FILENAME;
@@ -59,7 +59,7 @@ public class FileEntity implements Serializable /*extends EnterpriseUnit*/ {
     private java.sql.Date DATE_CHANGED;
     private String CHANGED_BY;
     
-    private List<FileSequence> sequences = new ArrayList<FileSequence>();
+    private List<SecaFileSequence> sequences = new ArrayList<SecaFileSequence>();
 
     public static enum FILE_STATUS{
         INCOMPLETE,
@@ -149,11 +149,11 @@ public class FileEntity implements Serializable /*extends EnterpriseUnit*/ {
     }
     
     @OneToMany(fetch=FetchType.LAZY,mappedBy="FILE")
-    public List<FileSequence> getSequences() {
+    public List<SecaFileSequence> getSequences() {
         return sequences;
     }
 
-    public void setSequences(List<FileSequence> sequences) {
+    public void setSequences(List<SecaFileSequence> sequences) {
         this.sequences = sequences;
     }
 

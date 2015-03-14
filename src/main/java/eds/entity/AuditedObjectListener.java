@@ -16,27 +16,29 @@ import org.joda.time.DateTime;
  */
 public class AuditedObjectListener {
     
+    //Inject an user object here for CHANGED_BY and CREATED_BY
+    
     @PrePersist
     @PreUpdate
-    public void PrePersistUpdate(EnterpriseObject entity){
-        recordDateChanged(entity);
-        recordCreated(entity);
+    public void PrePersistUpdate(AuditedObject object){
+        recordDateChanged(object);
+        recordCreated(object);
     }
     
     
-    public void recordDateChanged(EnterpriseObject entity){
+    public void recordDateChanged(AuditedObject object){
         DateTime today = new DateTime();
         java.sql.Date todaySQL = new java.sql.Date(today.getMillis());
         
-        entity.setDATE_CHANGED(todaySQL);
+        object.setDATE_CHANGED(todaySQL);
     }
     
-    public void recordCreated(EnterpriseObject entity){
-        if(entity.DATE_CREATED != null) return;
+    public void recordCreated(AuditedObject object){
+        if(object.getDATE_CREATED() != null) return;
         
         DateTime today = new DateTime();
         java.sql.Date todaySQL = new java.sql.Date(today.getMillis());
         
-        entity.setDATE_CREATED(todaySQL);
+        object.setDATE_CREATED(todaySQL);
     }
 }

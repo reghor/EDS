@@ -27,6 +27,9 @@ public class UserAccount extends EnterpriseData {
     private boolean USER_LOCKED;
     private int UNSUCCESSFUL_ATTEMPTS;
     private java.util.Date LAST_UNSUCCESS_ATTEMPT; //Timestamp
+    
+    //[20150314] Put this here temporarily until there is a need to put it somewhere else
+    private String PROFILE_PIC_URL;
 
     public String getUSERNAME() {
         return USERNAME;
@@ -68,7 +71,14 @@ public class UserAccount extends EnterpriseData {
     public void setLAST_UNSUCCESS_ATTEMPT(java.util.Date LAST_UNSUCCESS_ATTEMPT) {
         this.LAST_UNSUCCESS_ATTEMPT = LAST_UNSUCCESS_ATTEMPT;
     }
-
+    
+    public String getPROFILE_PIC_URL(){
+        return this.PROFILE_PIC_URL;
+    }
+    
+    public void setPROFILE_PIC_URL(String PROFILE_PIC_URL){
+        this.PROFILE_PIC_URL = PROFILE_PIC_URL;
+    }
 
     @Override
     public void randInit() {

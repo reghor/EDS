@@ -31,10 +31,8 @@ public abstract class EnterpriseData extends AuditedObject{
     protected java.sql.Date END_DATE;
     protected int SNO;
     protected String CHANGED_BY;
-    protected Date DATE_CREATED;
     protected String CREATED_BY;
 
-    
     /**
      * 
      * @return 

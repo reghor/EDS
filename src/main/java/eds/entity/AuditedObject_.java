@@ -15,4 +15,8 @@ import javax.persistence.metamodel.StaticMetamodel;
  */
 @StaticMetamodel(AuditedObject.class)
 public class AuditedObject_ {
+    public static volatile SingularAttribute<AuditedObject,java.sql.Date> DATE_CHANGED;
+    public static volatile SingularAttribute<AuditedObject, String> CHANGED_BY;
+    public static volatile SingularAttribute<AuditedObject, java.sql.Date> DATE_CREATED;
+    public static volatile SingularAttribute<AuditedObject, String> CREATED_BY;
 }
