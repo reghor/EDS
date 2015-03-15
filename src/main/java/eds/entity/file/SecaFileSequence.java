@@ -19,7 +19,7 @@ import javax.persistence.Table;
  * @author KH
  */
 @Entity
-@Table(name="FILESEQUENCE")
+@Table(name="SECAFILESEQUENCE")
 public class SecaFileSequence implements Serializable /*extends EnterpriseData*/ {
 
     private SecaFileEntity FILE;

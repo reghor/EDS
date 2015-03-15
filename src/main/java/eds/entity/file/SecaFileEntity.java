@@ -39,9 +39,9 @@ import org.joda.time.LocalDate;
  * @author KH
  */
 @Entity
-@Table(name="FILEENTITY")
-@DiscriminatorValue("FILEENTITY") //for EDS
-@TableGenerator(name="FILEENTITY_SEQ",initialValue=1,allocationSize=1,table="SEQUENCE") //No uploads of multiple files, so allocationSize 1 is fine
+@Table(name="SECAFILEENTITY")
+@DiscriminatorValue("SECAFILEENTITY") //for EDS
+@TableGenerator(name="SECAFILEENTITY_SEQ",initialValue=1,allocationSize=1,table="SEQUENCE") //No uploads of multiple files, so allocationSize 1 is fine
 public class SecaFileEntity implements Serializable /*extends EnterpriseUnit*/ {
 
     private long FILE_ID;
@@ -66,7 +66,7 @@ public class SecaFileEntity implements Serializable /*extends EnterpriseUnit*/ {
         COMPLETED
     }
 
-    @Id @GeneratedValue(generator="FILEENTITY_SEQ",strategy=GenerationType.TABLE)
+    @Id @GeneratedValue(generator="SECAFILEENTITY_SEQ",strategy=GenerationType.TABLE)
     public long getFILE_ID() {
         return FILE_ID;
     }

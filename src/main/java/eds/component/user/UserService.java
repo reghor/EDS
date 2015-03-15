@@ -310,7 +310,13 @@ public class UserService extends Service {
      * UserAccountLockedException. If authentication fails, return null and let
      * the client code handle.
      * <p>
-     * Should UserServie handle session?
+     * Should UserServie handle session? [20150315] Nope at this moment. Session
+     * is handled by the Web presentation layer, unless we're talking about Web 
+     * Services.
+     * <p>
+     * Should we return the UserAccount object? Ok, since I have no idea what I
+     * want to return to the client upon login, I will just dunp anything in a 
+     * Map<String,Object> object.
      *
      * @param username
      * @param password
@@ -446,6 +452,39 @@ public class UserService extends Service {
     }
     
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public UserAccount getUserAccountById(long userid) 
+            throws DBConnectionException{
+        try {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<UserAccount> criteria = builder.createQuery(UserAccount.class);
+            Root<UserAccount> sourceEntity = criteria.from(UserAccount.class); //FROM UserType
+            
+            criteria.select(sourceEntity); // SELECT *
+            criteria.where(builder.equal(sourceEntity.get(UserAccount_.OWNER), userid)); //WHERE USERTYPENAME = userTypeName
+            
+            //Temporary measure before we find a better way to define the underlying
+            //data of UserAccount object and subsequently how to retrieve the correct
+            //result.
+            //
+            List<UserAccount> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            if(results == null || results.size() <= 0)
+                return null;
+
+            return results.get(0);
+
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public boolean checkUsernameExist(String username) throws DBConnectionException{
         try{
             CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -470,7 +509,7 @@ public class UserService extends Service {
         }
     }
     
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public long getUserCount() throws DBConnectionException{
         try{
             CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -483,6 +522,85 @@ public class UserService extends Service {
                     .getSingleResult();
             
             return result;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public String getUserProfilePicLocation(long userid) throws DBConnectionException{
+        
+        try{
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<String> criteria = builder.createQuery(String.class);
+            Root<UserAccount> sourceEntity = criteria.from(UserAccount.class); //FROM UserAccount
+            
+            criteria.select(sourceEntity.get(UserAccount_.PROFILE_PIC_URL)); // SELECT PROFILE_PIC_URL
+            criteria.where(builder.equal(sourceEntity.get(UserAccount_.OWNER), userid)); //WHERE OWNER.OBJECT_ID = userid
+            
+            List<String> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            if(results == null || results.size() <= 0)
+                return null;
+
+            return results.get(0);
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void setProfilePicLocationForUserid(long userid, String profilePicLocation)
+            throws UserNotFoundException, DBConnectionException{
+        
+        try{
+            //Get the useraccount object
+            UserAccount userAccount = this.getUserAccountById(userid);
+            
+            if(userAccount == null)
+                throw new UserNotFoundException(userid);
+            
+            userAccount.setPROFILE_PIC_URL(profilePicLocation);
+            
+            em.persist(userAccount);
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void setProfilePicLocationForUsername(String username, String profilePicLocation)
+            throws UserNotFoundException, DBConnectionException{
+        
+        try{
+            //Get the useraccount object
+            UserAccount userAccount = this.getUserAccountByUsername(username);
+            
+            if(userAccount == null)
+                throw new UserNotFoundException(username);
+            
+            userAccount.setPROFILE_PIC_URL(profilePicLocation);
+            
+            em.persist(userAccount);
             
         } catch (PersistenceException pex) {
             if (pex.getCause() instanceof GenericJDBCException) {
@@ -518,14 +636,4 @@ public class UserService extends Service {
         return hashedPassword;
     }
 
-    public String getUS_USER() {
-        return US_USER;
-    }
-
-    public void setUS_USER(String US_USER) {
-        this.US_USER = US_USER;
-    }
-
-    
-    
 }
