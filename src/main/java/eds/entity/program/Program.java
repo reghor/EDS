@@ -7,8 +7,10 @@
 package eds.entity.program;
 
 
+import eds.entity.AuditedObjectListener;
 import eds.entity.EnterpriseObject;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -21,6 +23,7 @@ import javax.persistence.TableGenerator;
 @Entity
 @Table(name="PROGRAM")
 @TableGenerator(name="PROGRAM_SEQ",initialValue=1,allocationSize=1,table="SEQUENCE")
+@EntityListeners(ProgramListener.class)
 public class Program extends EnterpriseObject{
     
     private String PROGRAM_NAME;

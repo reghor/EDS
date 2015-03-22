@@ -13,7 +13,7 @@ import javax.persistence.metamodel.StaticMetamodel;
  *
  * @author KH
  */
-@StaticMetamodel(ProgramAccess.class)
-public class ProgramAccess_ extends EnterpriseRelationship_ {
+@StaticMetamodel(ProgramAssignment.class)
+public class ProgramAssignment_ extends EnterpriseRelationship_ {
     
 }

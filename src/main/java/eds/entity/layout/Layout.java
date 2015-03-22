@@ -3,34 +3,39 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package eds.entity.layout;
 
-package eds.entity.program;
-
-import eds.entity.EnterpriseRelationship;
+import eds.entity.EnterpriseObject;
 import javax.persistence.Entity;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import javax.persistence.EntityListeners;
 import javax.persistence.Table;
 
 /**
  *
- * @author KH
+ * @author LeeKiatHaw
  */
 @Entity
-@Table(name="PROGRAM_ACCESS")
-public class ProgramAccess extends EnterpriseRelationship {
+@Table(name="LAYOUT")
+@EntityListeners(LayoutListener.class)
+public class Layout extends EnterpriseObject {
 
-    //Any additional attributes to be maintained for this relationship?
-    //protected String REL_TYPE = "MENU_ITEM_ACCESS"; no need to redefine it here
-    
-    @PrePersist
-    public void prePersist(){
-        this.REL_TYPE = "PROGRAM_ACCESS";
+    private String LAYOUT_NAME;
+    private String VIEW_ROOT;
+
+    public String getLAYOUT_NAME() {
+        return LAYOUT_NAME;
     }
-    
-    @PreUpdate
-    public void preUpdate(){
-        this.REL_TYPE = "PROGRAM_ACCESS";
+
+    public void setLAYOUT_NAME(String LAYOUT_NAME) {
+        this.LAYOUT_NAME = LAYOUT_NAME;
+    }
+
+    public String getVIEW_ROOT() {
+        return VIEW_ROOT;
+    }
+
+    public void setVIEW_ROOT(String VIEW_ROOT) {
+        this.VIEW_ROOT = VIEW_ROOT;
     }
     
     @Override

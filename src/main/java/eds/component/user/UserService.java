@@ -317,14 +317,15 @@ public class UserService extends Service {
      * Should we return the UserAccount object? Ok, since I have no idea what I
      * want to return to the client upon login, I will just dunp anything in a 
      * Map<String,Object> object.
+     * <p>
+     * [20150321] Returning the User object is safe as you can't get any EnterpriseData
+     * if you do not know the table name. Anyway, no reason restricting access at this level.
      *
      * @param username
      * @param password
-     * @param uc
-     * @return
      * @throws UserAccountLockedException
-     * @throws EDS.component.user.UserLoginException
-     * @throws EDS.component.data.DBConnectionException
+     * @throws UserLoginException
+     * @throws eds.component.data.DBConnectionException
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void login(String username, String password, Map<String,Object> userValues) 
@@ -365,6 +366,8 @@ public class UserService extends Service {
                  * Should construct and return a UserContainer instead of the User 
                  * or UserAccount object. User object is useless and UserAccount
                  * object would contain passwords.
+                 * 
+                 * 
                  */
                 EnterpriseObject owner = userAccount.getOWNER();
                 
@@ -382,6 +385,68 @@ public class UserService extends Service {
                 
             } else {
                 throw new UserLoginException("UserService: Something not handled yet!");
+            }
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } 
+        catch (Exception ex) {
+            throw ex;
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public User login(String username, String password) 
+            throws UserAccountLockedException,
+                   UserLoginException, 
+                   DBConnectionException {
+        try {
+            //Check if username exists
+            UserAccount userAccount = this.getUserAccountByUsername(username);
+            if(userAccount == null) //Do not tell user that username does not exist for security reasons
+                throw new UserLoginException("Wrong credentials.");
+            
+            //If user's account is already locked, no need to authenticate further
+            if(userAccount.isUSER_LOCKED())
+                throw new UserAccountLockedException(username);
+            
+            String secureHash = this.getPasswordHash(username, password, HASH_KEY);
+            if (!secureHash.equals(userAccount.getPASSWORD())) { //authentication fails
+                //increment unsuccessful counter and set lock flag
+                userAccount.setLAST_UNSUCCESS_ATTEMPT((new DateTime()).toDate());
+                userAccount.setUNSUCCESSFUL_ATTEMPTS(userAccount.getUNSUCCESSFUL_ATTEMPTS() + 1);
+                if (userAccount.getUNSUCCESSFUL_ATTEMPTS() >= MAX_UNSUCCESS_ATTEMPTS)
+                    userAccount.setUSER_LOCKED(true);
+                
+                em.persist(userAccount);
+                
+                throw new UserLoginException("Wrong credentials.");
+            }
+            
+            //If authentication passes
+            if(secureHash.equals(userAccount.getPASSWORD())){
+                //Only if there were any unsuccessful login attempts, reset counter
+                if(userAccount.getUNSUCCESSFUL_ATTEMPTS() > 0){
+                    userAccount.setUNSUCCESSFUL_ATTEMPTS(0);
+                    em.persist(userAccount);
+                }
+                /**
+                 * Should construct and return a UserContainer instead of the User 
+                 * or UserAccount object. User object is useless and UserAccount
+                 * object would contain passwords.
+                 * 
+                 * 
+                 */
+                EnterpriseObject owner = userAccount.getOWNER();
+                
+                User user = (User) HibernateHelper.initializeAndUnproxy(owner);
+                
+                return user;
+                
+            } else {
+                throw new RuntimeException("UserService: Something not handled yet!");
             }
         } catch (PersistenceException pex) {
             if (pex.getCause() instanceof GenericJDBCException) {
