@@ -23,7 +23,7 @@ public class ProgramAssignment extends EnterpriseRelationship {
     //Any additional attributes to be maintained for this relationship?
     //protected String REL_TYPE = "MENU_ITEM_ACCESS"; no need to redefine it here
     
-    @PrePersist
+    /*@PrePersist
     public void prePersist(){
         this.REL_TYPE = "PROGRAM_ASSIGNMENT";
     }
@@ -31,7 +31,7 @@ public class ProgramAssignment extends EnterpriseRelationship {
     @PreUpdate
     public void preUpdate(){
         this.REL_TYPE = "PROGRAM_ASSIGNMENT";
-    }
+    }*/
     
     @Override
     public void randInit() {

@@ -5,6 +5,7 @@
  */
 package eds.component.program;
 
+import eds.component.GenericEnterpriseObjectService;
 import java.io.Serializable;
 import java.util.List;
 import javax.ejb.EJB;
@@ -22,6 +23,7 @@ import org.hibernate.exception.GenericJDBCException;
 import eds.component.data.DBConnectionException;
 import eds.component.user.UserService;
 import eds.entity.EnterpriseObject;
+import eds.entity.EnterpriseRelationship;
 import eds.entity.EnterpriseRelationship_;
 import eds.entity.program.Program;
 import eds.entity.program.ProgramAssignment;
@@ -42,6 +44,7 @@ public class ProgramService implements Serializable {
     private EntityManager em;
     
     @EJB private UserService userService;
+    @EJB private GenericEnterpriseObjectService genericEntepriseObjectService;
     /**
      * 
      * @param programName
@@ -117,7 +120,7 @@ public class ProgramService implements Serializable {
                 throw new ProgramAssignmentException("Program with ID "+programId+" does not exist!");
 
             //Check if the assignment already exist
-            if(this.checkProgramAuthForUser(userTypeId, programId))
+            if(this.checkProgramAuthForUserType(userTypeId, programId))
                 throw new ProgramAssignmentException("Usertype with ID "+userTypeId+" already has access to Program with ID "+programId+".");
             
             //Create bidrectional relationships
@@ -235,7 +238,7 @@ public class ProgramService implements Serializable {
             Root<Program> sourceEntity = criteria.from(Program.class); //FROM UserType
 
             criteria.multiselect(
-                    sourceEntity.get(Program_.VIEW_DIRECTORY),
+                    //sourceEntity.get(Program_.VIEW_DIRECTORY),
                     sourceEntity.get(Program_.VIEW_ROOT)); // SELECT VIEW_DIRECTORY, VIEW_ROOT
             
             criteria.where(builder.equal(sourceEntity.get(Program_.PROGRAM_NAME), programName)); // WHERE
@@ -245,7 +248,7 @@ public class ProgramService implements Serializable {
             if(results == null || results.size() <= 0)
                 return "";
             
-            return results.get(0).get(0).toString() + results.get(0).get(1).toString();
+            return results.get(0).get(0).toString();// + results.get(0).get(1).toString();
             
         } catch (PersistenceException pex) {
             if (pex.getCause() instanceof GenericJDBCException) {
@@ -259,56 +262,39 @@ public class ProgramService implements Serializable {
     }
     
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public boolean checkProgramAuthForUser(long usertypeid, String programName) 
+    public boolean checkProgramAuthForUserType(long usertypeid, String programName) 
             throws DBConnectionException{
-        try{
-            //Retrieve all programs assigned to the user, and check if any of them is the program required
-            //We are not using join and assuming that the number of program assignment should be small
-            List<ProgramAssignment> result = this.getProgramAssignmentsForUserType(usertypeid);
-            
-            for(ProgramAssignment assignment:result){
-                EnterpriseObject target = assignment.getTARGET();
-                
-                if(target instanceof Program){
-                    Program targetProgram = (Program) target;
-                    
-                    //Why???
-                    String test1 = programName;
-                    String test2 = targetProgram.getPROGRAM_NAME();
-                    boolean equals = test1.equals(test2);
-                    if(equals)
-                        return true;
-                }
-            }
+        
+        List<Program> programs = this.getProgramByName(programName);
+        //Always use the first result
+        if(programs == null || programs.size() <=0)
             return false;
-            
-        } catch (PersistenceException pex) {
-            if (pex.getCause() instanceof GenericJDBCException) {
-                throw new DBConnectionException(pex.getCause().getMessage());
-            }
-            throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        
+        Program program = programs.get(0);
+        return this.checkProgramAuthForUserType(usertypeid, program.getOBJECTID());
     }
     
+    
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public boolean checkProgramAuthForUser(long usertypeid, long programid) 
+    public boolean checkProgramAuthForUserType(long usertypeid, long programid) 
             throws DBConnectionException{
         try{
-            //This is so much easier than checkProgramAuthForUser(long usertypeid, String programName)
+            //This is so much easier than checkProgramAuthForUserType(long usertypeid, String programName)
             //but there won't be much business case where the client knows the programid. Most of 
             //the time the programName is requested instead, so this would be less frequently used.
-            CriteriaBuilder builder = em.getCriteriaBuilder();
+            /*CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<ProgramAssignment> criteria = builder.createQuery(ProgramAssignment.class);
             Root<ProgramAssignment> sourceEntity = criteria.from(ProgramAssignment.class); //FROM ProgramAssignment
             
             criteria.select(sourceEntity); // SELECT *
             criteria.where(builder.equal(sourceEntity.get(ProgramAssignment_.SOURCE), usertypeid));
             criteria.where(builder.equal(sourceEntity.get(ProgramAssignment_.TARGET), programid));
+            */
             
-            List<ProgramAssignment> results = em.createQuery(criteria)
-                    .getResultList();
+            List<EnterpriseRelationship> results = this.genericEntepriseObjectService.getRelationshipsForObjects(usertypeid, programid);
+            
+            /*List<ProgramAssignment> results = em.createQuery(criteria)
+                    .getResultList();*/
             
             if(results.size() > 0)
                 return true;

@@ -7,6 +7,7 @@
 package eds.entity;
 
 import java.sql.Date;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -21,12 +22,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name="ENTERPRISE_RELATIONSHIP")
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+@DiscriminatorColumn(name="REL_TYPE")
 public abstract class EnterpriseRelationship extends AuditedObject {
     
     protected EnterpriseObject SOURCE;
     protected EnterpriseObject TARGET;
     
-    protected String REL_TYPE;
+    //protected String REL_TYPE;
     protected int REL_SEQUENCE;
     protected String CHANGED_BY;
     protected Date DATE_CREATED;
@@ -50,6 +52,7 @@ public abstract class EnterpriseRelationship extends AuditedObject {
         this.TARGET = TARGET;
     }
     
+    /*
     @Id
     public String getREL_TYPE() {
         return REL_TYPE;
@@ -58,6 +61,7 @@ public abstract class EnterpriseRelationship extends AuditedObject {
     public void setREL_TYPE(String REL_TYPE) {
         this.REL_TYPE = REL_TYPE;
     }
+    */
     
     @Id
     public int getREL_SEQUENCE() {

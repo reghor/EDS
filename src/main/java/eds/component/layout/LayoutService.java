@@ -175,12 +175,24 @@ public class LayoutService implements Serializable {
                 throw new LayoutAssignmentException("Layout "+layoutid+" does not exist.");
             
             //Check if the assignment already exists
-            List<EnterpriseRelationship> existingRels1 = genericEOService.getRelByObjectId(clientid, layoutid);
-            List<EnterpriseRelationship> existingRels2 = genericEOService.getRelByObjectId(layoutid, clientid);
+            List<EnterpriseRelationship> existingRels1 = genericEOService.getRelationshipsForObjects(clientid, layoutid);
+            List<EnterpriseRelationship> existingRels2 = genericEOService.getRelationshipsForObjects(layoutid, clientid);
             
             if(existingRels1.size() > 0 || existingRels2.size() > 0)
                 throw new LayoutAssignmentException("Assignment already exists!");
             
+            //If all validations are passed, create the bidirectional relationship
+            LayoutAssignment layoutAssignment1 = new LayoutAssignment();
+            LayoutAssignment layoutAssignment2 = new LayoutAssignment();
+
+            layoutAssignment1.setSOURCE(clientEO);
+            layoutAssignment1.setTARGET(layoutEO);
+
+            layoutAssignment2.setTARGET(clientEO);
+            layoutAssignment2.setSOURCE(layoutEO);
+
+            em.persist(layoutAssignment1);
+            em.persist(layoutAssignment2);
             
 
         } catch (PersistenceException pex) {
@@ -253,8 +265,8 @@ public class LayoutService implements Serializable {
         return this.getLayoutByName(layoutName).getVIEW_ROOT();
     }
     
-    pubic String getLayoutViewRootForSite(){
-        
+    public String getLayoutViewRootForSite(){
+        throw new UnsupportedOperationException();
     }
     
     

@@ -7,11 +7,8 @@ package eds.entity.layout;
 
 import eds.entity.EnterpriseRelationship;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 /**
  *
@@ -23,7 +20,7 @@ public class LayoutAssignment extends EnterpriseRelationship{
     
     private int PRIORITY;
 
-    @Id
+    //@Id
     public int getPRIORITY() {
         return PRIORITY;
     }

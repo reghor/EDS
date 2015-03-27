@@ -403,6 +403,14 @@ public class UserService extends Service {
                    UserLoginException, 
                    DBConnectionException {
         try {
+            //Check if username is empty
+            if(username == null || username.length() <= 0)
+                throw new UserLoginException("Please enter username.");
+            
+            //Check if password is empty
+            if(password == null || password.length() <= 0)
+                throw new UserLoginException("Please enter password.");
+            
             //Check if username exists
             UserAccount userAccount = this.getUserAccountByUsername(username);
             if(userAccount == null) //Do not tell user that username does not exist for security reasons
