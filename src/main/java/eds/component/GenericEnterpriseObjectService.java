@@ -176,10 +176,10 @@ public class GenericEnterpriseObjectService {
         }
     }
     
-    public Class<? extends EnterpriseObject> getEnterpriseObjectById(long objectid, Class<? extends EnterpriseObject> c) 
+    public <T extends EnterpriseObject> T getEnterpriseObjectById(long objectid, Class<T> c) 
             throws DBConnectionException{
         try{
-            return em.find(c.getClass(), objectid);
+            return em.find(c, objectid);
         } catch (PersistenceException pex) {
             if (pex.getCause() instanceof GenericJDBCException) {
                 throw new DBConnectionException(pex.getCause().getMessage());
@@ -189,4 +189,5 @@ public class GenericEnterpriseObjectService {
             throw ex;
         }
     }
+
 }
