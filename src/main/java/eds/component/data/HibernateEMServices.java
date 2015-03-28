@@ -4,18 +4,15 @@
  */
 package eds.component.data;
 
-import eds.utilities.EntityExplorer;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
-import javax.persistence.PersistenceUnit;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Metamodel;
 import org.hibernate.Session;
@@ -86,6 +83,27 @@ public class HibernateEMServices implements Serializable {
         return cfg;
     }
 
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public List<Class> getAllEntities() throws DBConnectionException {
+        try {
+            Metamodel metamodel = em.getMetamodel();
+            List<Class> allEntities = new ArrayList<Class>();
+            for (final ManagedType<?> managedType : metamodel.getManagedTypes()) {
+                allEntities.add(managedType.getJavaType()); // this returns the java class of the @Entity object
+            }
+            return allEntities;
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } catch (Exception ex) {
+            throw ex;
+        }
+
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void regenerateDBTables() throws DBConnectionException {
 
         try {
@@ -102,11 +120,11 @@ public class HibernateEMServices implements Serializable {
 
             //Delete all tables first
             new SchemaExport(cfg).drop(true, true);
-                //.setProperty("hibernate.hbm2ddl.auto", "create")) //it is currently update
+            //.setProperty("hibernate.hbm2ddl.auto", "create")) //it is currently update
             //.execute(true, true, true, false);
             new SchemaExport(cfg)
                     .execute(true, true, true, true);
-            
+
         } catch (PersistenceException pex) {
             if (pex.getCause() instanceof GenericJDBCException) {
                 throw new DBConnectionException(pex.getCause().getMessage());
