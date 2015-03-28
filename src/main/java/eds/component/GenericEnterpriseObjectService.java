@@ -10,8 +10,6 @@ import eds.entity.EnterpriseObject;
 import eds.entity.EnterpriseObject_;
 import eds.entity.EnterpriseRelationship;
 import eds.entity.EnterpriseRelationship_;
-import eds.entity.client.Client;
-import eds.entity.user.UserType;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -168,6 +166,20 @@ public class GenericEnterpriseObjectService {
             
             return results;
             
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+    
+    public Class<? extends EnterpriseObject> getEnterpriseObjectById(long objectid, Class<? extends EnterpriseObject> c) 
+            throws DBConnectionException{
+        try{
+            return em.find(c.getClass(), objectid);
         } catch (PersistenceException pex) {
             if (pex.getCause() instanceof GenericJDBCException) {
                 throw new DBConnectionException(pex.getCause().getMessage());
