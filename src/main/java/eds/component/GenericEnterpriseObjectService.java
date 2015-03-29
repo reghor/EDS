@@ -108,6 +108,39 @@ public class GenericEnterpriseObjectService {
     }
     
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <T extends EnterpriseRelationship> List<T> getRelationshipsForSourceObject(long sourceobjectid, Class<T> c)
+        throws DBConnectionException{
+        try{
+            //We wanted to use em.find(), but that would require us to create a 
+            //composite primary key class, which might complicate things a little.
+            //So let's stick to typed queries.
+            
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<T> criteria = builder.createQuery(c);
+            Root<T> sourceEntity = criteria.from(c); //FROM UserType
+
+            criteria.select(sourceEntity); // SELECT *
+            
+            criteria.where(
+                    builder.equal(sourceEntity.get(EnterpriseRelationship_.SOURCE), sourceobjectid)
+                );
+            
+            List<T> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            return results;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public List<EnterpriseRelationship> getRelationshipsForTargetObject(long targetobjectid)
         throws DBConnectionException{
         try{
@@ -126,6 +159,39 @@ public class GenericEnterpriseObjectService {
                 );
             
             List<EnterpriseRelationship> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            return results;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <T extends EnterpriseRelationship> List<T> getRelationshipsForTargetObject(long targetobjectid, Class<T> c)
+        throws DBConnectionException{
+        try{
+            //We wanted to use em.find(), but that would require us to create a 
+            //composite primary key class, which might complicate things a little.
+            //So let's stick to typed queries.
+            
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<T> criteria = builder.createQuery(c);
+            Root<T> sourceEntity = criteria.from(c); //FROM UserType
+
+            criteria.select(sourceEntity); // SELECT *
+            
+            criteria.where(
+                    builder.equal(sourceEntity.get(EnterpriseRelationship_.TARGET), targetobjectid)
+                );
+            
+            List<T> results = em.createQuery(criteria)
                     .getResultList();
             
             return results;
@@ -176,7 +242,7 @@ public class GenericEnterpriseObjectService {
         }
     }
     
-    public <T extends EnterpriseObject> T getEnterpriseObjectById(long objectid, Class<T> c) 
+    public <T extends EnterpriseObject> T getEnterpriseObjectById(Long objectid, Class<T> c) 
             throws DBConnectionException{
         try{
             return em.find(c, objectid);
@@ -188,6 +254,93 @@ public class GenericEnterpriseObjectService {
         } catch (Exception ex) {
             throw ex;
         }
+    }
+    
+    public <T extends EnterpriseObject> List<T> getEnterpriseObjectsByName(String objectName,Class<T> c)
+        throws DBConnectionException{
+        try{
+            
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<T> criteria = builder.createQuery(c);
+            Root<T> sourceEntity = criteria.from(c); //FROM 
+
+            criteria.select(sourceEntity); // SELECT *
+            
+            criteria.where(builder.equal(sourceEntity.get(EnterpriseObject_.OBJECT_NAME),objectName));
+            
+            List<T> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            return results;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <R extends EnterpriseRelationship> List<R> getRelationshipsForObjects(long sourceobjectid, long targetobjectid, Class<R> r)
+            throws DBConnectionException{
+        try{
+            //We wanted to use em.find(), but that would require us to create a 
+            //composite primary key class, which might complicate things a little.
+            //So let's stick to typed queries.
+            
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<R> criteria = builder.createQuery(r);
+            Root<R> sourceEntity = criteria.from(r); //FROM UserType
+
+            criteria.select(sourceEntity); // SELECT *
+            
+            criteria.where(
+                builder.and(
+                    builder.equal(sourceEntity.get(EnterpriseRelationship_.SOURCE), sourceobjectid),
+                    builder.equal(sourceEntity.get(EnterpriseRelationship_.TARGET), targetobjectid)
+                )
+            );
+            
+            List<R> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            return results;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <T extends EnterpriseObject> List<T> getAllEnterpriseObjects(Class<T> c) throws DBConnectionException{
+        try{
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<T> criteria = builder.createQuery(c);
+            Root<T> sourceEntity = criteria.from(c); //FROM UserType
+
+            criteria.select(sourceEntity); // SELECT *
+            
+            List<T> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            return results;
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } catch (Exception ex) {
+            throw ex;
+        }
+            
     }
 
 }

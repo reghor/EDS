@@ -37,7 +37,8 @@ public abstract class EnterpriseData extends AuditedObject{
      * 
      * @return 
      */
-    @Id @ManyToOne(fetch=FetchType.LAZY) //For performance's sake
+    //@Id @ManyToOne(fetch=FetchType.LAZY) //For performance's sake
+    @Id @ManyToOne(fetch=FetchType.EAGER) //Actually, it won't affect performance much as each ED only has 1 EO.
     public EnterpriseObject getOWNER() {
         return OWNER;
     }

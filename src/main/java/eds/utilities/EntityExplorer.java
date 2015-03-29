@@ -105,11 +105,9 @@ public class EntityExplorer implements Serializable {
     }
     
     public static void collectPackages(File directory, Package currentTree, List<Package> found) throws CloneNotSupportedException{
-        if(directory.isDirectory()) System.out.println("It's a directory.");
-        if(directory.isFile()) System.out.println("It's a file.");
-        //List<File> childrenFiles = Arrays.asList(directory.listFiles());
-        List<File> childrenFiles = Arrays.asList(
-                (new File("file:/Users/LeeKiatHaw/SegMail/target/SegMail-1.0-SNAPSHOT/WEB-INF/lib/EDS-1.0-SNAPSHOT.jar!/eds/entity/")).listFiles());
+        
+        List<File> childrenFiles = Arrays.asList(directory.listFiles());
+        
         boolean leaf = true;
         
          for(File childFile : childrenFiles){
