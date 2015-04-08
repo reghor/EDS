@@ -23,10 +23,10 @@ import javax.persistence.Table;
 @Table(name="ENTERPRISE_RELATIONSHIP")
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @DiscriminatorColumn(name="REL_TYPE")
-public abstract class EnterpriseRelationship extends AuditedObject {
+public abstract class EnterpriseRelationship<S extends EnterpriseObject,T extends EnterpriseObject> extends AuditedObject {
     
-    protected EnterpriseObject SOURCE;
-    protected EnterpriseObject TARGET;
+    protected S SOURCE;
+    protected T TARGET;
     
     //protected String REL_TYPE;
     protected int REL_SEQUENCE;
@@ -35,20 +35,20 @@ public abstract class EnterpriseRelationship extends AuditedObject {
     protected String CREATED_BY;
 
     @Id @ManyToOne
-    public EnterpriseObject getSOURCE() {
+    public S getSOURCE() {
         return SOURCE;
     }
 
-    public void setSOURCE(EnterpriseObject SOURCE) {
+    public void setSOURCE(S SOURCE) {
         this.SOURCE = SOURCE;
     }
 
     @Id @ManyToOne
-    public EnterpriseObject getTARGET() {
+    public T getTARGET() {
         return TARGET;
     }
 
-    public void setTARGET(EnterpriseObject TARGET) {
+    public void setTARGET(T TARGET) {
         this.TARGET = TARGET;
     }
     

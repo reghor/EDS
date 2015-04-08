@@ -13,6 +13,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 /**
  *
  * @author KH
+ * @param <T>
  */
 @StaticMetamodel(EnterpriseData.class)
 public class EnterpriseData_ extends AuditedObject_ {

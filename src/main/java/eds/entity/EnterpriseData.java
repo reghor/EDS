@@ -19,19 +19,18 @@ import javax.persistence.Table;
 /**
  *
  * @author KH
+ * @param <T>
  */
 @Entity
 @Table(name="ENTERPRISEDATA")
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @EntityListeners(EnterpriseDataListener.class)
-public abstract class EnterpriseData extends AuditedObject{
+public abstract class EnterpriseData<T extends EnterpriseObject> extends AuditedObject{
     
-    protected EnterpriseObject OWNER;
+    protected T OWNER;
     protected java.sql.Date START_DATE;
     protected java.sql.Date END_DATE;
     protected int SNO;
-    protected String CHANGED_BY;
-    protected String CREATED_BY;
 
     /**
      * 
@@ -39,11 +38,11 @@ public abstract class EnterpriseData extends AuditedObject{
      */
     //@Id @ManyToOne(fetch=FetchType.LAZY) //For performance's sake
     @Id @ManyToOne(fetch=FetchType.EAGER) //Actually, it won't affect performance much as each ED only has 1 EO.
-    public EnterpriseObject getOWNER() {
+    public T getOWNER() {
         return OWNER;
     }
 
-    public void setOWNER(EnterpriseObject OWNER) {
+    public void setOWNER(T OWNER) {
         this.OWNER = OWNER;
     }
 
