@@ -28,7 +28,9 @@ import javax.persistence.TableGenerator;
 @Inheritance(strategy=InheritanceType.JOINED)
 @DiscriminatorColumn(name="OBJECT_TYPE")
 @TableGenerator(name="ENTERPRISE_OBJECT_SEQ",initialValue=1,allocationSize=10,table="SEQUENCE")
-@EntityListeners(AuditedObjectListener.class)
+@EntityListeners({
+    AuditedObjectListener.class,
+    EnterpriseObjectListener.class})
 public abstract class EnterpriseObject extends AuditedObject
         implements Serializable, Comparable<EnterpriseObject> {
     
@@ -56,14 +58,16 @@ public abstract class EnterpriseObject extends AuditedObject
         this.OBJECTID = OBJECTID;
     }
 
+    /**
+     * You can't set object name, it is part of the EnterpriseObjectListener module
+     * which copies the child object's Alias into OBJECT_NAME.
+     * 
+     * @return 
+     */
     public String getOBJECT_NAME() {
         return OBJECT_NAME;
     }
-
-    public void setOBJECT_NAME(String UNIT_TYPE) {
-        this.OBJECT_NAME = UNIT_TYPE;
-    }
-
+    
     public Date getSTART_DATE() {
         return START_DATE;
     }
@@ -91,6 +95,8 @@ public abstract class EnterpriseObject extends AuditedObject
     public abstract void randInit();
     
     public abstract Object generateKey();
+    
+    public abstract String getAlias();
 
     /**
      * 
