@@ -18,6 +18,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 /**
  *
@@ -67,6 +68,10 @@ public abstract class EnterpriseObject extends AuditedObject
     public String getOBJECT_NAME() {
         return OBJECT_NAME;
     }
+
+    public void setOBJECT_NAME(String OBJECT_NAME) {
+        this.OBJECT_NAME = OBJECT_NAME;
+    }
     
     public Date getSTART_DATE() {
         return START_DATE;
@@ -96,7 +101,7 @@ public abstract class EnterpriseObject extends AuditedObject
     
     public abstract Object generateKey();
     
-    public abstract String getAlias();
+    public abstract String alias();
 
     /**
      * 

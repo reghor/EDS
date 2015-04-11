@@ -34,9 +34,9 @@ public class EnterpriseDataListener {
     public void recordEndDate(EnterpriseData dataRecord){
         if(dataRecord.getEND_DATE() != null)
             return;
-        DateTime today = new DateTime();
-        java.sql.Date todaySQL = new java.sql.Date(today.getMillis());
+        DateTime highDate = new DateTime(9999,12,31,0,0,0,0);
+        java.sql.Date highDateSQL = new java.sql.Date(highDate.getMillis());
         
-        dataRecord.setEND_DATE(todaySQL);
+        dataRecord.setEND_DATE(highDateSQL);
     }
 }

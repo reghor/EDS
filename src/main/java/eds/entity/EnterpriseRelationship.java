@@ -18,6 +18,8 @@ import javax.persistence.Table;
 /**
  *
  * @author KH
+ * @param <S>
+ * @param <T>
  */
 @Entity
 @Table(name="ENTERPRISE_RELATIONSHIP")
@@ -34,7 +36,7 @@ public abstract class EnterpriseRelationship<S extends EnterpriseObject,T extend
     protected Date DATE_CREATED;
     protected String CREATED_BY;
 
-    @Id @ManyToOne
+    @Id @ManyToOne(targetEntity=EnterpriseObject.class)
     public S getSOURCE() {
         return SOURCE;
     }
@@ -43,7 +45,7 @@ public abstract class EnterpriseRelationship<S extends EnterpriseObject,T extend
         this.SOURCE = SOURCE;
     }
 
-    @Id @ManyToOne
+    @Id @ManyToOne(targetEntity=EnterpriseObject.class)
     public T getTARGET() {
         return TARGET;
     }

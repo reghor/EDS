@@ -20,6 +20,7 @@ public class EnterpriseObjectListener {
     }
 
     private void copyObjectName(EnterpriseObject object) {
-        object.OBJECT_NAME = object.getAlias();
+        if(object.OBJECT_NAME == null || object.OBJECT_NAME.isEmpty())
+            object.OBJECT_NAME = object.alias();
     }
 }

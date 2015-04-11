@@ -6,6 +6,8 @@
 package eds.component;
 
 import eds.component.data.DBConnectionException;
+import eds.entity.EnterpriseData;
+import eds.entity.EnterpriseData_;
 import eds.entity.EnterpriseObject;
 import eds.entity.EnterpriseObject_;
 import eds.entity.EnterpriseRelationship;
@@ -21,6 +23,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import org.hibernate.exception.GenericJDBCException;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -341,6 +344,75 @@ public class GenericEnterpriseObjectService {
             throw ex;
         }
             
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <T extends EnterpriseData> List<T> getEnterpriseData(long objectid, Class<T> c) 
+            throws DBConnectionException{
+        try{
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<T> criteria = builder.createQuery(c);
+            Root<T> sourceEntity = criteria.from(c);
+            
+            criteria.select(sourceEntity);
+            criteria.where(
+                    builder.equal(sourceEntity.get(EnterpriseData_.OWNER), objectid)
+                );
+            
+            List<T> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            return results;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } catch (Exception ex) {
+            throw ex;
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <T extends EnterpriseData> List<T> getEnterpriseDataForObject(long objectid, java.sql.Date start, java.sql.Date end, Class<T> c) 
+            throws DBConnectionException{
+        try{
+            /**
+             * If any of the dates are not provided, use the low or high date respectively
+             * - If start is null, use 01.01.1800 as start
+             * - If end is null, use 31.12.9999
+             */
+            
+            if(start == null) start = new java.sql.Date((new DateTime(1800,1,1,0,0,0,0)).getMillis());
+            if(end == null) end = new java.sql.Date((new DateTime(9999,12,31,0,0,0,0)).getMillis());
+                
+            
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<T> criteria = builder.createQuery(c);
+            Root<T> sourceEntity = criteria.from(c);
+            
+            criteria.select(sourceEntity);
+            criteria.where(
+                    builder.and(
+                            builder.equal(sourceEntity.get(EnterpriseData_.OWNER), objectid),
+                            builder.lessThanOrEqualTo(sourceEntity.get(EnterpriseData_.START_DATE), end),
+                            builder.greaterThanOrEqualTo(sourceEntity.get(EnterpriseData_.END_DATE), start)
+                    )
+                );
+            
+            List<T> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            return results;
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } catch (Exception ex) {
+            throw ex;
+        }
     }
 
 }
