@@ -396,8 +396,8 @@ public class GenericEnterpriseObjectService {
             criteria.where(
                     builder.and(
                             builder.equal(sourceEntity.get(EnterpriseData_.OWNER), objectid),
-                            builder.lessThanOrEqualTo(sourceEntity.get(EnterpriseData_.START_DATE), end),
-                            builder.greaterThanOrEqualTo(sourceEntity.get(EnterpriseData_.END_DATE), start)
+                            builder.lessThanOrEqualTo(sourceEntity.<java.sql.Date>get(EnterpriseData_.START_DATE), end),
+                            builder.greaterThanOrEqualTo(sourceEntity.<java.sql.Date>get(EnterpriseData_.END_DATE), start)
                     )
                 );
             

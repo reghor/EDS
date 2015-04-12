@@ -7,6 +7,7 @@
 package eds.entity;
 
 import java.sql.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -15,6 +16,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -37,7 +39,10 @@ public abstract class EnterpriseData<T extends EnterpriseObject> extends Audited
      * @return 
      */
     //@Id @ManyToOne(fetch=FetchType.LAZY) //For performance's sake
-    @Id @ManyToOne(fetch=FetchType.EAGER,targetEntity=EnterpriseObject.class) //Actually, it won't affect performance much as each ED only has 1 EO.
+    @Id @ManyToOne(fetch=FetchType.EAGER,//Actually, it won't affect performance much as each ED only has 1 EO.
+            cascade = CascadeType.ALL, //To resolve the issue of null column when merging
+            optional=false,
+            targetEntity=EnterpriseObject.class) 
     public T getOWNER() {
         return OWNER;
     }
@@ -51,7 +56,7 @@ public abstract class EnterpriseData<T extends EnterpriseObject> extends Audited
      * records
      * @return 
      */
-    @Id 
+    @Id
     public Date getSTART_DATE() {
         return START_DATE;
     }
