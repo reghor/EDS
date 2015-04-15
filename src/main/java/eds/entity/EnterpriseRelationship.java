@@ -87,5 +87,18 @@ public abstract class EnterpriseRelationship<S extends EnterpriseObject,T extend
      */
     public abstract Object generateKey();
     
+    /**
+     * Helpful constructor
+     * 
+     * @param s
+     * @param t 
+     */
+    public EnterpriseRelationship(S s, T t){
+        this.setSOURCE(s);
+        this.setTARGET(t);
+    }
     
+    public EnterpriseRelationship(){
+        
+    }
 }
