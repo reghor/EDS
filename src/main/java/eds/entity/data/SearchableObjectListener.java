@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eds.entity;
+package eds.entity.data;
 
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -12,15 +12,14 @@ import javax.persistence.PreUpdate;
  *
  * @author LeeKiatHaw
  */
-public class EnterpriseObjectListener {
+public class SearchableObjectListener {
     @PrePersist
     @PreUpdate
-    public void PrePersistUpdate(EnterpriseObject object){
-        copyObjectName(object);
+    public void PrePersistUpdate(Searchable object){
+        copySearchName(object);
     }
 
-    private void copyObjectName(EnterpriseObject object) {
-        if(object.OBJECT_NAME == null || object.OBJECT_NAME.isEmpty())
-            object.OBJECT_NAME = object.alias();
+    private void copySearchName(Searchable object) {
+        object.copySearchName();
     }
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eds.entity;
+package eds.entity.data;
 
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
