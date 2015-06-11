@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package eds.entity;
+package eds.entity.audit;
 
 import java.io.Serializable;
 import java.sql.Date;

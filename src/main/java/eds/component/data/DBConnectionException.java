@@ -6,12 +6,14 @@
 
 package eds.component.data;
 
+import javax.ejb.EJBException;
+
 /**
  * Applicable only to Hibernate Session, because creation of a Session object
  * requires opening a DB connection while creation of an EM doesn't. 
  * @author KH
  */
-public class DBConnectionException extends Exception{
+public class DBConnectionException extends EJBException{
 
     public DBConnectionException(String message) {
         super(message);

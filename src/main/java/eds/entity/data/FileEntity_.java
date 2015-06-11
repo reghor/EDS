@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package eds.entity;
+package eds.entity.data;
 
 import java.sql.Date;
 import javax.persistence.metamodel.SingularAttribute;

@@ -5,7 +5,7 @@
  */
 package eds.component.data;
 
-import eds.entity.EnterpriseData;
+import eds.entity.data.EnterpriseData;
 
 /**
  * By 2015 Apr, I had started to realize that I created a separate Exception type

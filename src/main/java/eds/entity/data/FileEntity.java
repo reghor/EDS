@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eds.entity;
+package eds.entity.data;
 
+import eds.entity.audit.AuditedObject;
+import eds.entity.audit.AuditedObjectListener;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
