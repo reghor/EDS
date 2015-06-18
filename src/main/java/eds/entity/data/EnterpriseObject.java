@@ -20,7 +20,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
 
 /**
  *
@@ -103,6 +102,12 @@ public abstract class EnterpriseObject extends AuditedObject
     
     public abstract Object generateKey();
     
+    /**
+     * Essential method for the EnterpriseObjectListener to copy the correct attribute
+     * as the OBJECT_NAME of the EnterpriseObject.
+     * 
+     * @return 
+     */
     public abstract String alias();
 
     /**

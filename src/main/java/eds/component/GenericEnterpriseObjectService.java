@@ -158,7 +158,7 @@ public class GenericEnterpriseObjectService {
      * @throws DBConnectionException 
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public <T extends EnterpriseRelationship> List<T> getRelationshipsForSourceObject(long sourceobjectid, Class<T> c)
+    public <R extends EnterpriseRelationship> List<R> getRelationshipsForSourceObject(long sourceobjectid, Class<R> c)
             throws DBConnectionException {
         try {
             //We wanted to use em.find(), but that would require us to create a 
@@ -166,8 +166,8 @@ public class GenericEnterpriseObjectService {
             //So let's stick to typed queries.
 
             CriteriaBuilder builder = em.getCriteriaBuilder();
-            CriteriaQuery<T> criteria = builder.createQuery(c);
-            Root<T> sourceEntity = criteria.from(c); //FROM UserType
+            CriteriaQuery<R> criteria = builder.createQuery(c);
+            Root<R> sourceEntity = criteria.from(c); //FROM UserType
 
             criteria.select(sourceEntity); // SELECT *
 
@@ -175,7 +175,7 @@ public class GenericEnterpriseObjectService {
                     builder.equal(sourceEntity.get(EnterpriseRelationship_.SOURCE), sourceobjectid)
             );
 
-            List<T> results = em.createQuery(criteria)
+            List<R> results = em.createQuery(criteria)
                     .getResultList();
 
             return results;
@@ -242,7 +242,7 @@ public class GenericEnterpriseObjectService {
      * @throws DBConnectionException 
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public <T extends EnterpriseRelationship> List<T> getRelationshipsForTargetObject(long targetobjectid, Class<T> c)
+    public <R extends EnterpriseRelationship> List<R> getRelationshipsForTargetObject(long targetobjectid, Class<R> c)
             throws DBConnectionException {
         try {
             //We wanted to use em.find(), but that would require us to create a 
@@ -250,8 +250,8 @@ public class GenericEnterpriseObjectService {
             //So let's stick to typed queries.
 
             CriteriaBuilder builder = em.getCriteriaBuilder();
-            CriteriaQuery<T> criteria = builder.createQuery(c);
-            Root<T> sourceEntity = criteria.from(c); //FROM UserType
+            CriteriaQuery<R> criteria = builder.createQuery(c);
+            Root<R> sourceEntity = criteria.from(c); //FROM
 
             criteria.select(sourceEntity); // SELECT *
 
@@ -259,7 +259,7 @@ public class GenericEnterpriseObjectService {
                     builder.equal(sourceEntity.get(EnterpriseRelationship_.TARGET), targetobjectid)
             );
 
-            List<T> results = em.createQuery(criteria)
+            List<R> results = em.createQuery(criteria)
                     .getResultList();
 
             return results;

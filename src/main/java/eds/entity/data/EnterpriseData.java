@@ -9,6 +9,7 @@ package eds.entity.data;
 import eds.entity.audit.AuditedObject;
 import java.sql.Date;
 import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -17,7 +18,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
 
 /**
  *
@@ -27,6 +27,7 @@ import javax.persistence.Temporal;
 @Entity
 @Table(name="ENTERPRISEDATA")
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+//@DiscriminatorColumn(name="DATA_TYPE")
 @EntityListeners(EnterpriseDataListener.class)
 public abstract class EnterpriseData<T extends EnterpriseObject> extends AuditedObject{
     
