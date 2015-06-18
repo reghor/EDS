@@ -33,8 +33,7 @@ import org.joda.time.DateTime;
  */
 @Stateless
 public class GenericEnterpriseObjectService {
-<<<<<<< HEAD
-    
+
     /**
      * Inject an instance of EntityManager based on config in persistence.xml.
      * The persistence.xml must be in the project and includes this EDS package
@@ -54,15 +53,6 @@ public class GenericEnterpriseObjectService {
     public EnterpriseObject getEnterpriseObjectById(long objectid) throws DBConnectionException{
         try{
             //Use plain EntityManager methods instead of CriteriaQuery
-=======
-
-    @PersistenceContext(name = "HIBERNATE")
-    private EntityManager em;
-
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public EnterpriseObject getEnterpriseObjectById(long objectid) throws DBConnectionException {
-        try {
->>>>>>> origin/master
             return em.find(EnterpriseObject.class, objectid);
         } catch (PersistenceException pex) {
             if (pex.getCause() instanceof GenericJDBCException) {
@@ -73,7 +63,6 @@ public class GenericEnterpriseObjectService {
             throw ex;
         }
     }
-<<<<<<< HEAD
     
     /**
      * Retrieves all EnterpriseObject with the objectName. Disregards the Object Type.
@@ -89,9 +78,6 @@ public class GenericEnterpriseObjectService {
      * @return a list of EnterpriseObject
      * @throws DBConnectionException if no DB connection can be established
      */
-=======
-
->>>>>>> origin/master
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public List<EnterpriseObject> getEnterpriseObjectByName(String objectName)
             throws DBConnectionException {
@@ -101,17 +87,10 @@ public class GenericEnterpriseObjectService {
             CriteriaQuery<EnterpriseObject> criteria = builder.createQuery(EnterpriseObject.class);
             Root<EnterpriseObject> sourceEntity = criteria.from(EnterpriseObject.class); //FROM 
 
-<<<<<<< HEAD
             criteria.select(sourceEntity);//SELECT *
             
             criteria.where(builder.equal(sourceEntity.get(EnterpriseObject_.OBJECT_NAME),objectName)); //WHERE OBJECT_NAME
             
-=======
-            criteria.select(sourceEntity); // SELECT *
-
-            criteria.where(builder.equal(sourceEntity.get(EnterpriseObject_.OBJECT_NAME), objectName));
-
->>>>>>> origin/master
             List<EnterpriseObject> results = em.createQuery(criteria)
                     .getResultList();
 
@@ -126,7 +105,6 @@ public class GenericEnterpriseObjectService {
             throw ex;
         }
     }
-<<<<<<< HEAD
     
     /**
      * Retrieves a list of EnterpriseRelationship with the provided object ID as the 
@@ -136,9 +114,6 @@ public class GenericEnterpriseObjectService {
      * @return a list of EnterpriseRelationship
      * @throws DBConnectionException 
      */
-=======
-
->>>>>>> origin/master
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public List<EnterpriseRelationship> getRelationshipsForSourceObject(long sourceobjectid)
             throws DBConnectionException {
@@ -171,7 +146,6 @@ public class GenericEnterpriseObjectService {
             throw ex;
         }
     }
-<<<<<<< HEAD
     
     /**
      * Retrieves a list of EnterpriseRelationship with the provided object ID as the 
@@ -183,9 +157,6 @@ public class GenericEnterpriseObjectService {
      * @return a list of T which are subclasses of EnterpriseRelationship
      * @throws DBConnectionException 
      */
-=======
-
->>>>>>> origin/master
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public <T extends EnterpriseRelationship> List<T> getRelationshipsForSourceObject(long sourceobjectid, Class<T> c)
             throws DBConnectionException {
@@ -218,7 +189,6 @@ public class GenericEnterpriseObjectService {
             throw ex;
         }
     }
-<<<<<<< HEAD
     
     /**
      * Retrieves a list of EnterpriseRelationship with the provided object ID as the 
@@ -228,9 +198,6 @@ public class GenericEnterpriseObjectService {
      * @return
      * @throws DBConnectionException 
      */
-=======
-
->>>>>>> origin/master
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public List<EnterpriseRelationship> getRelationshipsForTargetObject(long targetobjectid)
             throws DBConnectionException {
@@ -263,7 +230,6 @@ public class GenericEnterpriseObjectService {
             throw ex;
         }
     }
-<<<<<<< HEAD
     
     /**
      * Retrieves a list of EnterpriseRelationship with the provided object ID as the 
@@ -275,9 +241,6 @@ public class GenericEnterpriseObjectService {
      * @return
      * @throws DBConnectionException 
      */
-=======
-
->>>>>>> origin/master
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public <T extends EnterpriseRelationship> List<T> getRelationshipsForTargetObject(long targetobjectid, Class<T> c)
             throws DBConnectionException {
@@ -310,7 +273,6 @@ public class GenericEnterpriseObjectService {
             throw ex;
         }
     }
-<<<<<<< HEAD
     
     /**
      * Retrieves a list of EnterpriseRelationship with the provided source and target object ID.
@@ -320,9 +282,6 @@ public class GenericEnterpriseObjectService {
      * @return
      * @throws DBConnectionException 
      */
-=======
-
->>>>>>> origin/master
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public List<EnterpriseRelationship> getRelationshipsForObjects(long sourceobjectid, long targetobjectid)
             throws DBConnectionException {
@@ -358,7 +317,6 @@ public class GenericEnterpriseObjectService {
             throw ex;
         }
     }
-<<<<<<< HEAD
     
     /**
      * Retrieves a list of EnterpriseObjects by OBJECT_ID.
@@ -369,15 +327,9 @@ public class GenericEnterpriseObjectService {
      * @return
      * @throws DBConnectionException 
      */
-    public <T extends EnterpriseObject> T getEnterpriseObjectById(Long objectid, Class<T> c) 
+    public <T extends EnterpriseObject> T getEnterpriseObjectById(long objectid, Class<T> c) 
             throws DBConnectionException{
         try{
-=======
-
-    public <T extends EnterpriseObject> T getEnterpriseObjectById(Long objectid, Class<T> c)
-            throws DBConnectionException {
-        try {
->>>>>>> origin/master
             return em.find(c, objectid);
         } catch (PersistenceException pex) {
             if (pex.getCause() instanceof GenericJDBCException) {
@@ -388,7 +340,6 @@ public class GenericEnterpriseObjectService {
             throw ex;
         }
     }
-<<<<<<< HEAD
     
     /**
      * Retrieves a list of EnterpriseObjects by OBJECT_NAME.
@@ -402,14 +353,6 @@ public class GenericEnterpriseObjectService {
     public <T extends EnterpriseObject> List<T> getEnterpriseObjectsByName(String objectName,Class<T> c)
         throws DBConnectionException{
         try{
-            
-=======
-
-    public <T extends EnterpriseObject> List<T> getEnterpriseObjectsByName(String objectName, Class<T> c)
-            throws DBConnectionException {
-        try {
-
->>>>>>> origin/master
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<T> criteria = builder.createQuery(c);
             Root<T> sourceEntity = criteria.from(c); //FROM 
@@ -432,7 +375,6 @@ public class GenericEnterpriseObjectService {
             throw ex;
         }
     }
-<<<<<<< HEAD
     
     /**
      * Retrieves a list of EnterpriseRelationship with the provided source and target object ID.
@@ -444,9 +386,6 @@ public class GenericEnterpriseObjectService {
      * @return
      * @throws DBConnectionException 
      */
-=======
-
->>>>>>> origin/master
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public <R extends EnterpriseRelationship> List<R> getRelationshipsForObjects(long sourceobjectid, long targetobjectid, Class<R> r)
             throws DBConnectionException {
@@ -482,7 +421,6 @@ public class GenericEnterpriseObjectService {
             throw ex;
         }
     }
-<<<<<<< HEAD
     
     /**
      * Retrieves all EnterpriseObjects of the provided class.
@@ -492,9 +430,6 @@ public class GenericEnterpriseObjectService {
      * @return
      * @throws DBConnectionException 
      */
-=======
-
->>>>>>> origin/master
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public <T extends EnterpriseObject> List<T> getAllEnterpriseObjects(Class<T> c) throws DBConnectionException {
         try {
@@ -518,7 +453,6 @@ public class GenericEnterpriseObjectService {
         }
 
     }
-<<<<<<< HEAD
     
     /**
      * Retrieves all EnterpriseData belonging to the provided object ID.
@@ -529,9 +463,6 @@ public class GenericEnterpriseObjectService {
      * @return
      * @throws DBConnectionException 
      */
-=======
-
->>>>>>> origin/master
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public <T extends EnterpriseData> List<T> getEnterpriseData(long objectid, Class<T> c)
             throws DBConnectionException {
@@ -559,7 +490,6 @@ public class GenericEnterpriseObjectService {
             throw ex;
         }
     }
-<<<<<<< HEAD
     
     /**
      * Retrieves all EnterpriseData belonging to the provided object ID and within 
@@ -575,9 +505,6 @@ public class GenericEnterpriseObjectService {
      * @return
      * @throws DBConnectionException 
      */
-=======
-
->>>>>>> origin/master
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public <T extends EnterpriseData> List<T> getEnterpriseDataForObject(long objectid, java.sql.Date start, java.sql.Date end, Class<T> c)
             throws DBConnectionException {
@@ -622,6 +549,7 @@ public class GenericEnterpriseObjectService {
         }
     }
 
+    
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public <R extends EnterpriseRelationship> long countRelationshipsForSource(long sourceobjectid, Class<R> r) {
         try {
