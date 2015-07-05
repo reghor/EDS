@@ -7,9 +7,11 @@
 package eds.entity.data;
 
 import eds.entity.audit.AuditedObject;
+import eds.entity.audit.AuditedObjectListener;
 import java.sql.Date;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -26,6 +28,9 @@ import javax.persistence.Table;
 @Table(name="ENTERPRISE_RELATIONSHIP")
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @DiscriminatorColumn(name="REL_TYPE")
+@EntityListeners({
+    
+    EnterpriseObjectListener.class})
 public abstract class EnterpriseRelationship<S extends EnterpriseObject,T extends EnterpriseObject> extends AuditedObject {
     
     protected S SOURCE;
@@ -33,9 +38,9 @@ public abstract class EnterpriseRelationship<S extends EnterpriseObject,T extend
     
     //protected String REL_TYPE;
     protected int REL_SEQUENCE;
-    protected String CHANGED_BY;
-    protected Date DATE_CREATED;
-    protected String CREATED_BY;
+    
+    protected String SOURCE_TYPE;
+    protected String TARGET_TYPE;
 
     @Id @ManyToOne(targetEntity=EnterpriseObject.class)
     public S getSOURCE() {
@@ -74,6 +79,24 @@ public abstract class EnterpriseRelationship<S extends EnterpriseObject,T extend
     public void setREL_SEQUENCE(int REL_SEQUENCE) {
         this.REL_SEQUENCE = REL_SEQUENCE;
     }
+
+    public String getSOURCE_TYPE() {
+        return SOURCE_TYPE;
+    }
+
+    public void setSOURCE_TYPE(String SOURCE_TYPE) {
+        this.SOURCE_TYPE = SOURCE_TYPE;
+    }
+
+    public String getTARGET_TYPE() {
+        return TARGET_TYPE;
+    }
+
+    public void setTARGET_TYPE(String TARGET_TYPE) {
+        this.TARGET_TYPE = TARGET_TYPE;
+    }
+    
+    
 
     /**
      * Testing method for initializing random values for a table row

@@ -23,6 +23,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import org.hibernate.exception.GenericJDBCException;
 import org.joda.time.DateTime;
@@ -283,7 +284,7 @@ public class GenericEnterpriseObjectService {
      * @throws DBConnectionException 
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public List<EnterpriseRelationship> getRelationshipsForObjects(long sourceobjectid, long targetobjectid)
+    public List<EnterpriseRelationship> getRelationshipsForObject(long sourceobjectid, long targetobjectid)
             throws DBConnectionException {
         try {
             //We wanted to use em.find(), but that would require us to create a 
@@ -387,7 +388,7 @@ public class GenericEnterpriseObjectService {
      * @throws DBConnectionException 
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public <R extends EnterpriseRelationship> List<R> getRelationshipsForObjects(long sourceobjectid, long targetobjectid, Class<R> r)
+    public <R extends EnterpriseRelationship> List<R> getRelationshipsForObject(long sourceobjectid, long targetobjectid, Class<R> r)
             throws DBConnectionException {
         try {
             //We wanted to use em.find(), but that would require us to create a 
@@ -647,4 +648,135 @@ public class GenericEnterpriseObjectService {
             throw new EJBException(ex);
         }
     }
+            
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public List<EnterpriseRelationship> getRelationshipsForSourceObjects(List<Long> sourceids){
+        try {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<EnterpriseRelationship> query = builder.createQuery(EnterpriseRelationship.class);
+            Root<EnterpriseRelationship> sourceEntity = query.from(EnterpriseRelationship.class);
+            
+            query.where(sourceEntity.get(EnterpriseRelationship_.SOURCE).in(sourceids));
+            
+            List<EnterpriseRelationship> results = em.createQuery(query).getResultList();
+            
+            return results;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw new EJBException(pex);
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <R extends EnterpriseRelationship> List<R> getRelationshipsForSourceObjects(List<Long> sourceids, Class<R> r){
+        try {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<R> query = builder.createQuery(r);
+            Root<R> sourceEntity = query.from(r);
+            
+            query.where(sourceEntity.get(EnterpriseRelationship_.SOURCE).in(sourceids));
+            
+            List<R> results = em.createQuery(query).getResultList();
+            
+            return results;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw new EJBException(pex);
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public List<EnterpriseRelationship> getRelationshipsForTargetObjects(List<Long> targetids){
+        try {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<EnterpriseRelationship> query = builder.createQuery(EnterpriseRelationship.class);
+            Root<EnterpriseRelationship> sourceEntity = query.from(EnterpriseRelationship.class);
+            
+            query.where(sourceEntity.get(EnterpriseRelationship_.TARGET).in(targetids));
+            
+            List<EnterpriseRelationship> results = em.createQuery(query).getResultList();
+            
+            return results;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw new EJBException(pex);
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <R extends EnterpriseRelationship> List<R> getRelationshipsForTargetObjects(List<Long> targetids, Class<R> r){
+        try {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<R> query = builder.createQuery(r);
+            Root<R> sourceEntity = query.from(r);
+            
+            query.where(sourceEntity.get(EnterpriseRelationship_.TARGET).in(targetids));
+            
+            List<R> results = em.createQuery(query).getResultList();
+            
+            return results;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw new EJBException(pex);
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <R extends EnterpriseRelationship, T extends EnterpriseObject> List<T> getAllTargetObjectsFromSources(List<Long> sourceids, Class<R> r, Class<T> t){
+        try {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<T> query = builder.createQuery(t);
+            Root<R> source = query.from(r);
+            
+            Join<R,T> joinToTarget = source.join("TARGET");
+            
+            query.where(source.get(EnterpriseRelationship_.SOURCE).in(sourceids));
+            
+            List<T> results = em.createQuery(query).getResultList();
+            
+            return results;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw new EJBException(pex);
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <R extends EnterpriseRelationship, S extends EnterpriseObject> List<S> getAllSourceObjectsFromTargets(List<Long> targetids, Class<R> r, Class<S> s){
+        try {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<S> query = builder.createQuery(s);
+            Root<R> source = query.from(r);
+            
+            Join<R,S> joinToTarget = source.join("SOURCE");
+            
+            query.where(source.get(EnterpriseRelationship_.TARGET).in(targetids));
+            
+            List<S> results = em.createQuery(query).getResultList();
+            
+            return results;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw new EJBException(pex);
+        }
+    }
+    
 }

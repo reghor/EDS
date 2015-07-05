@@ -21,8 +21,9 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(EnterpriseRelationship.class)
 public class EnterpriseRelationship_<S extends EnterpriseObject_,T extends EnterpriseObject_> extends AuditedObject_{
     
-    
     public static volatile SingularAttribute<EnterpriseRelationship,? extends EnterpriseObject> SOURCE;
     public static volatile SingularAttribute<EnterpriseRelationship,? extends EnterpriseObject> TARGET;
-    public static volatile SingularAttribute<EnterpriseRelationship,String> REL_TYPE;
+    public static volatile SingularAttribute<EnterpriseRelationship,Integer> REL_SEQUENCE;
+    public static volatile SingularAttribute<EnterpriseRelationship,String> SOURCE_TYPE;
+    public static volatile SingularAttribute<EnterpriseRelationship,String> TARGET_TYPE;
 }
