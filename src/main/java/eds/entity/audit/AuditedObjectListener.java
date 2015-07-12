@@ -6,7 +6,6 @@
 
 package eds.entity.audit;
 
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -19,7 +18,9 @@ import org.joda.time.DateTime;
 public class AuditedObjectListener {
     
     //Inject an user object here for CHANGED_BY and CREATED_BY
-    @Inject private ActiveUser user;
+    //Injection doesn't work for listeners
+    //A bug has been raised for GF 4.1 https://java.net/jira/browse/GLASSFISH-21195
+    @Inject ActiveUser user;
     
     @PrePersist
     @PreUpdate
@@ -34,7 +35,8 @@ public class AuditedObjectListener {
         java.sql.Date todaySQL = new java.sql.Date(today.getMillis());
         
         object.setDATE_CHANGED(todaySQL);
-        object.setCHANGED_BY(user.getUsername());
+        if(user != null )
+            object.setCHANGED_BY(user.getUsername());
     }
     
     public void recordCreated(AuditedObject object){
@@ -44,7 +46,8 @@ public class AuditedObjectListener {
         java.sql.Date todaySQL = new java.sql.Date(today.getMillis());
         
         object.setDATE_CREATED(todaySQL);
-        object.setCHANGED_BY(user.getUsername());
+        if(user != null )
+            object.setCHANGED_BY(user.getUsername());
     }
 
 }

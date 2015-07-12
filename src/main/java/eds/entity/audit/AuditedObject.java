@@ -8,49 +8,29 @@ package eds.entity.audit;
 
 import java.io.Serializable;
 import java.sql.Date;
+import javax.persistence.MappedSuperclass;
 
 /**
  *
  * @author KH
  */
-public abstract class AuditedObject implements Serializable {
+public interface AuditedObject extends Serializable {
     
-    protected java.sql.Date DATE_CHANGED;
-    protected String CHANGED_BY;
-    protected java.sql.Date DATE_CREATED;
-    protected String CREATED_BY;
+    public Date getDATE_CREATED();
 
-    public Date getDATE_CREATED() {
-        return DATE_CREATED;
-    }
+    public void setDATE_CREATED(Date DATE_CREATED);
 
-    public void setDATE_CREATED(Date DATE_CREATED) {
-        this.DATE_CREATED = DATE_CREATED;
-    }
+    public Date getDATE_CHANGED();
 
-    public Date getDATE_CHANGED() {
-        return DATE_CHANGED;
-    }
+    public void setDATE_CHANGED(Date DATE_CHANGED);
+    
+    public String getCHANGED_BY();
 
-    public void setDATE_CHANGED(Date DATE_CHANGED) {
-        this.DATE_CHANGED = DATE_CHANGED;
-    }
+    public void setCHANGED_BY(String CHANGED_BY);
 
-    public String getCHANGED_BY() {
-        return CHANGED_BY;
-    }
+    public String getCREATED_BY();
 
-    public void setCHANGED_BY(String CHANGED_BY) {
-        this.CHANGED_BY = CHANGED_BY;
-    }
-
-    public String getCREATED_BY() {
-        return CREATED_BY;
-    }
-
-    public void setCREATED_BY(String CREATED_BY) {
-        this.CREATED_BY = CREATED_BY;
-    }
+    public void setCREATED_BY(String CREATED_BY);
     
     
 }

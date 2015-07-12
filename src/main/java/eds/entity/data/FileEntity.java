@@ -28,7 +28,7 @@ import javax.persistence.TableGenerator;
 //@Inheritance(strategy=InheritanceType.JOINED) //May need this in the future
 @TableGenerator(name="FILE_SEQ",initialValue=1,allocationSize=10,table="SEQUENCE")
 @EntityListeners(AuditedObjectListener.class)
-public class FileEntity extends AuditedObject implements Serializable {
+public class FileEntity implements Serializable {
  
     private long FILE_ID;
     private String NAME;
