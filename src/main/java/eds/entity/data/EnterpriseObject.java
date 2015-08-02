@@ -173,6 +173,30 @@ public abstract class EnterpriseObject
     }
 
     @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 23 * hash + (int) (this.OBJECTID ^ (this.OBJECTID >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final EnterpriseObject other = (EnterpriseObject) obj;
+        if (this.OBJECTID != other.OBJECTID) {
+            return false;
+        }
+        return true;
+    }
+    
+    
+
+    @Override
     public String toString() {
         return "EnterpriseObject{" + "OBJECTID=" + OBJECTID + ", OBJECT_NAME=" + OBJECT_NAME + ", START_DATE=" + START_DATE + ", END_DATE=" + END_DATE + '}';
     }

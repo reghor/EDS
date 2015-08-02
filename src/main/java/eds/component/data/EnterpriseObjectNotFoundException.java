@@ -5,6 +5,7 @@
  */
 package eds.component.data;
 
+import eds.entity.data.EnterpriseObject;
 import javax.ejb.EJBException;
 
 /**
@@ -13,8 +14,13 @@ import javax.ejb.EJBException;
  */
 public class EnterpriseObjectNotFoundException extends EJBException {
 
-    public EnterpriseObjectNotFoundException(long id) {
-        super("Object with ID "+id+" is not found.");
+    
+    public EnterpriseObjectNotFoundException(Class<? extends EnterpriseObject> object) {
+        super("Object "+object.getName()+" is not found.");
+    }
+
+    public EnterpriseObjectNotFoundException(Class<? extends EnterpriseObject> object, long id) {
+        super("Object "+object.getName()+" with ID "+id+" is not found.");
     }
     
     

@@ -5,6 +5,8 @@
  */
 package eds.component.data;
 
+import eds.entity.data.EnterpriseObject;
+
 /**
  * Usually thrown in creation of relationships where the SOURCE or TARGET 
  * entity is not found
@@ -16,4 +18,7 @@ public class EntityNotFoundException extends Exception{
         super(message);
     }
     
+    public EntityNotFoundException(Class<? extends EnterpriseObject> c,long id){
+        super(c.getSimpleName()+" "+id+" is not found.");
+    }
 }

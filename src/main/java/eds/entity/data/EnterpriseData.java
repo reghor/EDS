@@ -8,8 +8,8 @@ package eds.entity.data;
 
 import eds.entity.audit.AuditedObject;
 import java.sql.Date;
+import java.util.Objects;
 import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -151,4 +151,40 @@ public abstract class EnterpriseData<T extends EnterpriseObject> implements Audi
     public void setCREATED_BY(String CREATED_BY) {
         this.CREATED_BY = CREATED_BY;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.OWNER);
+        hash = 79 * hash + Objects.hashCode(this.START_DATE);
+        hash = 79 * hash + Objects.hashCode(this.END_DATE);
+        hash = 79 * hash + this.SNO;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final EnterpriseData<?> other = (EnterpriseData<?>) obj;
+        if (!Objects.equals(this.OWNER, other.OWNER)) {
+            return false;
+        }
+        if (!Objects.equals(this.START_DATE, other.START_DATE)) {
+            return false;
+        }
+        if (!Objects.equals(this.END_DATE, other.END_DATE)) {
+            return false;
+        }
+        if (this.SNO != other.SNO) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }
