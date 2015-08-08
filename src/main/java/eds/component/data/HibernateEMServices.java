@@ -4,6 +4,8 @@
  */
 package eds.component.data;
 
+import eds.entity.data.EnterpriseObject;
+import eds.entity.data.EnterpriseRelationship;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +103,28 @@ public class HibernateEMServices implements Serializable {
             throw ex;
         }
 
+    }
+    
+    public List<Class<? extends EnterpriseObject>> getAllEnterpriseObjects(){
+        List<Class<? extends EnterpriseObject>> allEO = new ArrayList<>();
+        List<Class> allEntities = getAllEntities();
+        for(Class c:allEntities){
+            if(c.isAssignableFrom(EnterpriseObject.class)){
+                allEO.add(c);
+            }
+        }
+        return allEO;
+    }
+    
+    public List<Class<? extends EnterpriseRelationship>> getAllEnterpriseRelationships(){
+        List<Class<? extends EnterpriseRelationship>> allRel = new ArrayList<>();
+        List<Class> allEntities = getAllEntities();
+        for(Class c:allEntities){
+            if(c.isAssignableFrom(EnterpriseRelationship.class)){
+                allRel.add(c);
+            }
+        }
+        return allRel;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

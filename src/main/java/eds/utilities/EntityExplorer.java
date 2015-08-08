@@ -13,13 +13,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.metamodel.ManagedType;
+import javax.persistence.metamodel.Metamodel;
 
 /**
  *
  * @author vincent.a.lee
  */
 public class EntityExplorer implements Serializable {
-    
+
     public static List<Class> getClasses(String packageName) throws Exception {
         File directory = null;
         try {
@@ -55,10 +57,10 @@ public class EntityExplorer implements Serializable {
         if (directory.exists()) {
             String[] files = directory.list(); // returns a list of files and directories.
             for (String file : files) {
-                
+
                 if (file.endsWith(".class")) {
                     // removes the .class extension
-                    Class c = Class.forName(packageName + '.'+ file.substring(0, file.length() - 6));
+                    Class c = Class.forName(packageName + '.' + file.substring(0, file.length() - 6));
                     classes.add(c);
                 }
             }
@@ -68,155 +70,152 @@ public class EntityExplorer implements Serializable {
         }
         return classes;
     }
-    
-    public static List<File> collectFiles(File directory, String extension){
+
+    public static List<File> collectFiles(File directory, String extension) {
         List<File> found = new ArrayList<File>();
         List<File> childrenFiles = Arrays.asList(directory.listFiles());
-        
-        for(File childFile : childrenFiles){
-            if(childFile.isDirectory()){
-                found.addAll(collectFiles(childFile,extension));
-            }
-            else{
-                if(childFile.getName().endsWith(extension)){
+
+        for (File childFile : childrenFiles) {
+            if (childFile.isDirectory()) {
+                found.addAll(collectFiles(childFile, extension));
+            } else {
+                if (childFile.getName().endsWith(extension)) {
                     found.add(childFile);
                 }
             }
         }
         return found;
     }
-    
-    public static List<Class> collectClasses(File directory, ClassLoader loader){
+
+    public static List<Class> collectClasses(File directory, ClassLoader loader) {
         List<Class> found = new ArrayList<Class>();
         List<File> childrenFiles = Arrays.asList(directory.listFiles());
-        
-        for(File childFile : childrenFiles){
-            if(childFile.isDirectory()){
-                found.addAll(collectClasses(childFile,loader));
-            }
-            else{
-                if(childFile.getName().endsWith(".class")){
+
+        for (File childFile : childrenFiles) {
+            if (childFile.isDirectory()) {
+                found.addAll(collectClasses(childFile, loader));
+            } else {
+                if (childFile.getName().endsWith(".class")) {
                     URL url = loader.getResource(childFile.getName().substring(0, (int) (childFile.getName().length() - 6)));
                 }
-                
+
             }
         }
         return found;
     }
-    
-    public static void collectPackages(File directory, Package currentTree, List<Package> found) throws CloneNotSupportedException{
-        
+
+    public static void collectPackages(File directory, Package currentTree, List<Package> found) throws CloneNotSupportedException {
+
         List<File> childrenFiles = Arrays.asList(directory.listFiles());
-        
+
         boolean leaf = true;
-        
-         for(File childFile : childrenFiles){
-            if(childFile.isDirectory()){
+
+        for (File childFile : childrenFiles) {
+            if (childFile.isDirectory()) {
                 //add the package as a parent first, then go into the next level
                 leaf = false;
                 currentTree.push(childFile.getName());
-                collectPackages(childFile,currentTree,found);
+                collectPackages(childFile, currentTree, found);
                 currentTree.pop();
             }
         }
-        if(leaf){
+        if (leaf) {
             found.add(currentTree.clone());
         }
     }
-    
-    public static List<Class> collectClasses(Package root, ClassLoader loader) throws ClassNotFoundException, CloneNotSupportedException, Exception{
+
+    public static List<Class> collectClasses(Package root, ClassLoader loader) throws ClassNotFoundException, CloneNotSupportedException, Exception {
         URL entityDirectory = getResource(root.toString(), loader);
         List<Package> found = new ArrayList<Package>();
         Package currentTree = new Package();
-        
+
         collectPackages(new File(entityDirectory.getFile()), root, found);
         List<Class> foundClasses = new ArrayList<Class>();
-        for(Package f:found){
+        for (Package f : found) {
             foundClasses.addAll(getClasses(f.toString()));
         }
-        
+
         return foundClasses;
     }
-    
-    public static List<Class> collectEntities(Package root, ClassLoader loader) throws CloneNotSupportedException, Exception{
+
+    public static List<Class> collectEntities(Package root, ClassLoader loader) throws CloneNotSupportedException, Exception {
         List<Class> found = collectClasses(root, loader);
         List<Class> entities = new ArrayList<Class>();
-        for(Class f:found){
-            if(f.isAnnotationPresent(Entity.class))
+        for (Class f : found) {
+            if (f.isAnnotationPresent(Entity.class)) {
                 entities.add(f);
+            }
         }
-        
+
         return entities;
     }
     /*
-    public static List<Class> collectBootstrapModules(Package root, ClassLoader loader) throws CloneNotSupportedException, Exception{
-        List<Class> found = collectClasses(root, loader);
-        List<Class> entities = new ArrayList<Class>();
-        for(Class f:found){
-            if(f.isAssignableFrom(BootstrapModule.class))
-                entities.add(f);
-        }
+     public static List<Class> collectBootstrapModules(Package root, ClassLoader loader) throws CloneNotSupportedException, Exception{
+     List<Class> found = collectClasses(root, loader);
+     List<Class> entities = new ArrayList<Class>();
+     for(Class f:found){
+     if(f.isAssignableFrom(BootstrapModule.class))
+     entities.add(f);
+     }
         
-        return entities;
-    }*/
-    
-    public static void main(String[] args) throws ClassNotFoundException, IOException, Exception{
+     return entities;
+     }*/
+
+    public static void main(String[] args) throws ClassNotFoundException, IOException, Exception {
         /*EntityExplorer explorer = new EntityExplorer();
-        System.out.println("Run test");
-        ClassLoader loader = explorer.getClassLoader();
-        URL entityDirectory = explorer.getResource("seca2.entity", loader);
-        System.out.println(entityDirectory);
+         System.out.println("Run test");
+         ClassLoader loader = explorer.getClassLoader();
+         URL entityDirectory = explorer.getResource("seca2.entity", loader);
+         System.out.println(entityDirectory);
         
-        List<File> found = explorer.collectFiles(new File(entityDirectory.getFile()), ".class");
+         List<File> found = explorer.collectFiles(new File(entityDirectory.getFile()), ".class");
         
-        for(File f:found){
-            String filename = f.getName();
-            System.out.println(filename);
-            Class T1 = Class.forName("seca2.entity.file."+filename.substring(0, (int) (filename.length() - 6)));
-            Class T = loader.loadClass("seca2.entity.file."+filename.substring(0, (int) (filename.length() - 6)));
-            System.out.println(T.getName());
-        }*/
-        
+         for(File f:found){
+         String filename = f.getName();
+         System.out.println(filename);
+         Class T1 = Class.forName("seca2.entity.file."+filename.substring(0, (int) (filename.length() - 6)));
+         Class T = loader.loadClass("seca2.entity.file."+filename.substring(0, (int) (filename.length() - 6)));
+         System.out.println(T.getName());
+         }*/
+
         /*
-        EntityExplorer explorer = new EntityExplorer();
+         EntityExplorer explorer = new EntityExplorer();
         
-        List<Class> fileClasses = explorer.getClasses("seca2.entity.file");
+         List<Class> fileClasses = explorer.getClasses("seca2.entity.file");
         
-        for(Class c:fileClasses){
-            if(c.isAnnotationPresent(Entity.class))
-                System.out.println(c.getName());
-        }*/
-        
-        
+         for(Class c:fileClasses){
+         if(c.isAnnotationPresent(Entity.class))
+         System.out.println(c.getName());
+         }*/
         EntityExplorer explorer = new EntityExplorer();
         /*ClassLoader loader = explorer.getClassLoader();
-        URL entityDirectory = explorer.getResource("seca2.entity", loader);
-        System.out.println(entityDirectory);
+         URL entityDirectory = explorer.getResource("seca2.entity", loader);
+         System.out.println(entityDirectory);
         
-        List<Package> found = new ArrayList<Package>();
-        Package currentTree = new Package();
+         List<Package> found = new ArrayList<Package>();
+         Package currentTree = new Package();
         
-        currentTree.push("seca2");
-        currentTree.push("entity");
-        explorer.collectPackages(new File(entityDirectory.getFile()), currentTree, found);
+         currentTree.push("seca2");
+         currentTree.push("entity");
+         explorer.collectPackages(new File(entityDirectory.getFile()), currentTree, found);
         
-        List<Class> foundClass = new ArrayList<Class>();
-        System.out.println("All packages found:");
-        for(Package f:found){
-            System.out.println(f);
-            foundClass.addAll(explorer.getClasses(f.toString()));
-        }*/
+         List<Class> foundClass = new ArrayList<Class>();
+         System.out.println("All packages found:");
+         for(Package f:found){
+         System.out.println(f);
+         foundClass.addAll(explorer.getClasses(f.toString()));
+         }*/
         Package root = new Package();
         root.push("seca2");
         root.push("entity");
-        
+
         ClassLoader loader = explorer.getClassLoader();
-        
+
         System.out.println("All entities found:");
         List<Class> foundEntities = explorer.collectEntities(root, loader);
-        for(Class c:foundEntities){
+        for (Class c : foundEntities) {
             System.out.println(c.getName());
         }
-        
+
     }
 }

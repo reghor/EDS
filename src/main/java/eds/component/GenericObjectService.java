@@ -18,8 +18,6 @@ import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -33,15 +31,15 @@ import org.joda.time.DateTime;
  * @author LeeKiatHaw
  */
 @Stateless
-public class GenericEnterpriseObjectService {
+public class GenericObjectService extends Service {
 
     /**
      * Inject an instance of EntityManager based on config in persistence.xml.
      * The persistence.xml must be in the project and includes this EDS package
      * as a JAR file.
      */
-    @PersistenceContext(name = "HIBERNATE")
-    private EntityManager em;
+    //@PersistenceContext(name = "HIBERNATE")
+    //private EntityManager em;
     
     /**
      * Retrieves an EnterpriseObject with objectid.
@@ -778,5 +776,4 @@ public class GenericEnterpriseObjectService {
             throw new EJBException(pex);
         }
     }
-    
 }

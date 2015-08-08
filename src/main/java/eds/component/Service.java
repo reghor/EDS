@@ -6,7 +6,8 @@
 package eds.component;
 
 import java.sql.Date;
-import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.joda.time.DateTime;
 
 /**
@@ -14,6 +15,14 @@ import org.joda.time.DateTime;
  * @author LeeKiatHaw
  */
 public abstract class Service {
+    
+    /**
+     * Inject an instance of EntityManager based on config in persistence.xml.
+     * The persistence.xml must be in the project and includes this EDS package
+     * as a JAR file.
+     */
+    @PersistenceContext(name = "HIBERNATE")
+    protected EntityManager em;
     
     protected java.sql.Date TAP_START;
     protected java.sql.Date TAP_END;
