@@ -7,6 +7,7 @@
 package eds.entity.data;
 
 import eds.entity.audit.AuditedObject;
+import eds.entity.audit.AuditedObjectListener;
 import java.sql.Date;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -28,7 +29,10 @@ import javax.persistence.Table;
 @Table(name="ENTERPRISEDATA")
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 //@DiscriminatorColumn(name="DATA_TYPE")
-@EntityListeners(EnterpriseDataListener.class)
+@EntityListeners({
+    AuditedObjectListener.class,
+    EnterpriseDataListener.class
+})
 public abstract class EnterpriseData<T extends EnterpriseObject> implements AuditedObject{
     
     protected T OWNER;
