@@ -59,9 +59,9 @@ public abstract class EnterpriseRelationship<S extends EnterpriseObject,T extend
 
 
     @Id @ManyToOne(targetEntity=EnterpriseObject.class)
-    @JoinColumn(name="SOURCE",
-            referencedColumnName="OBJECTID",
-            foreignKey=@ForeignKey(name="SOURCE",value=NO_CONSTRAINT))
+    //@JoinColumn(name="SOURCE",
+    //        referencedColumnName="OBJECTID",
+    //        foreignKey=@ForeignKey(name="SOURCE",value=NO_CONSTRAINT))
     public S getSOURCE() {
         return SOURCE;
     }
@@ -71,9 +71,9 @@ public abstract class EnterpriseRelationship<S extends EnterpriseObject,T extend
     }
 
     @Id @ManyToOne(targetEntity=EnterpriseObject.class)
-    @JoinColumn(name="TARGET",
-            referencedColumnName="OBJECTID",
-            foreignKey=@ForeignKey(name="TARGET",value=NO_CONSTRAINT))
+    //@JoinColumn(name="TARGET",
+    //        referencedColumnName="OBJECTID",
+    //        foreignKey=@ForeignKey(name="TARGET",value=NO_CONSTRAINT))
     public T getTARGET() {
         return TARGET;
     }
