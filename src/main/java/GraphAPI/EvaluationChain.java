@@ -24,8 +24,8 @@ import javax.persistence.TableGenerator;
  *
  * @author LeeKiatHaw
  */
-@Entity
-@Table(name="EVALUATION_CHAIN")
+//@Entity
+//@Table(name="EVALUATION_CHAIN")
 @TableGenerator(name="EVALUATION_CHAIN_SEQ",initialValue=1,allocationSize=1,table="SEQUENCE")
 public class EvaluationChain implements Serializable {
     

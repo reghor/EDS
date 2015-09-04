@@ -20,8 +20,8 @@ import javax.persistence.Table;
  * 
  * @author LeeKiatHaw
  */
-@Entity
-@Table(name="EVALUATION_CHAIN_ELEMENT")
+//@Entity
+//@Table(name="EVALUATION_CHAIN_ELEMENT")
 public class EvaluationChainElement<E extends EnterpriseObject,R extends EnterpriseRelationship> implements Serializable {
     
     private Long ID;

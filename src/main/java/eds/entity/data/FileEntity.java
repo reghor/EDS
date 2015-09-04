@@ -23,8 +23,8 @@ import javax.persistence.TableGenerator;
  * 
  * @author LeeKiatHaw
  */
-@Entity
-@Table(name="FILE_ENTITY")
+//@Entity
+//@Table(name="FILE_ENTITY")
 //@Inheritance(strategy=InheritanceType.JOINED) //May need this in the future
 @TableGenerator(name="FILE_SEQ",initialValue=1,allocationSize=10,table="SEQUENCE")
 @EntityListeners(AuditedObjectListener.class)
