@@ -395,7 +395,7 @@ public class GenericObjectService extends Service {
 
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<R> criteria = builder.createQuery(r);
-            Root<R> sourceEntity = criteria.from(r); //FROM UserType
+            Root<R> sourceEntity = criteria.from(r);
 
             criteria.select(sourceEntity); // SELECT *
 

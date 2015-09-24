@@ -3,9 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eds.entity.config;
+package eds.component.config;
 
+import eds.component.Service;
 import eds.component.data.DBConnectionException;
+import eds.entity.config.EnterpriseConfiguration;
+import eds.entity.config.EnterpriseConfiguration_;
+import eds.entity.data.EnterpriseObject;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -24,11 +28,36 @@ import org.joda.time.DateTime;
  * @author LeeKiatHaw
  */
 @Stateless
-public class GenericConfigService {
+public class GenericConfigService extends Service{
     
-    @PersistenceContext(name = "HIBERNATE")
-    private EntityManager em;
-    
+    /**
+     * Gets a dump of an entire config list.
+     * 
+     * @param <C>
+     * @param c
+     * @return 
+     */
+    public <C extends EnterpriseConfiguration> List<C> getConfigList(Class<C> c){
+        try{
+            CriteriaBuilder builder = em.getCriteriaBuilder();  
+            CriteriaQuery<C> criteria = builder.createQuery(c);
+            Root<C> sourceEntity = criteria.from(c);
+            
+            criteria.select(sourceEntity);
+            
+            List<C> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            return results;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw pex;
+        } 
+        
+    }
     
     /**
      * Creates an entirely new config entry. If the config passed in already has 
