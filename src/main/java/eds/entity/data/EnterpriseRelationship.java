@@ -9,7 +9,7 @@ package eds.entity.data;
 import eds.entity.audit.AuditedObject;
 import eds.entity.audit.AuditedObjectListener;
 import java.sql.Date;
-import static javax.persistence.CascadeType.ALL;
+import javax.persistence.CascadeType;
 import static javax.persistence.ConstraintMode.NO_CONSTRAINT;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
@@ -59,9 +59,9 @@ public abstract class EnterpriseRelationship<S extends EnterpriseObject,T extend
 
 
     @Id @ManyToOne(targetEntity=EnterpriseObject.class)
-    //@JoinColumn(name="SOURCE",
-    //        referencedColumnName="OBJECTID",
-    //        foreignKey=@ForeignKey(name="SOURCE",value=NO_CONSTRAINT))
+    @JoinColumn(name="SOURCE",
+            referencedColumnName="OBJECTID",
+            foreignKey=@ForeignKey(name="SOURCE",value=NO_CONSTRAINT))
     public S getSOURCE() {
         return SOURCE;
     }
@@ -71,9 +71,9 @@ public abstract class EnterpriseRelationship<S extends EnterpriseObject,T extend
     }
 
     @Id @ManyToOne(targetEntity=EnterpriseObject.class)
-    //@JoinColumn(name="TARGET",
-    //        referencedColumnName="OBJECTID",
-    //        foreignKey=@ForeignKey(name="TARGET",value=NO_CONSTRAINT))
+    @JoinColumn(name="TARGET",
+            referencedColumnName="OBJECTID",
+            foreignKey=@ForeignKey(name="TARGET",value=NO_CONSTRAINT))
     public T getTARGET() {
         return TARGET;
     }

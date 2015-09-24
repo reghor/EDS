@@ -5,6 +5,7 @@
  */
 package eds.entity.document;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.Entity;
@@ -20,7 +21,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="DocumentAuthor")
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
-public interface DocumentAuthor {
+public interface DocumentAuthor extends Serializable {
     
     /**
      * Returns the unique identifier of the author

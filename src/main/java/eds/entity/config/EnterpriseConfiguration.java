@@ -31,7 +31,6 @@ public abstract class EnterpriseConfiguration implements AuditedObject{
     protected long CONFIG_ID;
     protected java.sql.Date CONFIG_EFF_DATE;
     protected java.sql.Date CONFIG_END_DATE;
-    protected int SNO;
     
     /**
      * Previously these fields were from AuditedObject, but moved here as JPA
@@ -66,14 +65,6 @@ public abstract class EnterpriseConfiguration implements AuditedObject{
 
     public void setCONFIG_END_DATE(Date CONFIG_END_DATE) {
         this.CONFIG_END_DATE = CONFIG_END_DATE;
-    }
-
-    public int getSNO() {
-        return SNO;
-    }
-
-    public void setSNO(int SNO) {
-        this.SNO = SNO;
     }
     
     @Override
