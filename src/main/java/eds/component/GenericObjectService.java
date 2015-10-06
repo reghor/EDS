@@ -58,9 +58,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        } 
     }
     
     /**
@@ -100,9 +98,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        } 
     }
     
     /**
@@ -141,9 +137,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        } 
     }
     
     /**
@@ -184,9 +178,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        } 
     }
     
     /**
@@ -225,9 +217,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        } 
     }
     
     /**
@@ -268,9 +258,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        } 
     }
     
     /**
@@ -312,9 +300,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        } 
     }
     
     /**
@@ -335,9 +321,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        } 
     }
     
     /**
@@ -370,9 +354,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        } 
     }
     
     /**
@@ -416,9 +398,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        } 
     }
     
     /**
@@ -447,9 +427,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        } 
 
     }
     
@@ -485,9 +463,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        } 
     }
     
     /**
@@ -543,9 +519,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw pex;
-        } catch (Exception ex) {
-            throw ex;
-        }
+        } 
     }
 
     
@@ -569,9 +543,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw new EJBException(pex);
-        } catch (Exception ex) {
-            throw new EJBException(ex);
-        }
+        } 
 
     }
 
@@ -595,9 +567,7 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw new EJBException(pex);
-        } catch (Exception ex) {
-            throw new EJBException(ex);
-        }
+        } 
 
     }
 
@@ -619,11 +589,18 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw new EJBException(pex);
-        } catch (Exception ex) {
-            throw new EJBException(ex);
-        }
+        } 
     }
 
+    /**
+     * 
+     * @param <S>
+     * @param <R>
+     * @param targetid
+     * @param r
+     * @param s
+     * @return 
+     */        
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public <S extends EnterpriseObject, R extends EnterpriseRelationship>
             List<S> getAllSourceObjectsFromTarget(long targetid, Class<R> r, Class<S> s) {
@@ -631,7 +608,7 @@ public class GenericObjectService extends Service {
             List<R> rList = this.getRelationshipsForTargetObject(targetid, r);
 
             List<S> sList = new ArrayList();
-            for (R rInstance : rList) {
+            for (R rInstance : rList) { 
                 sList.add((S) rInstance.getSOURCE());
             }
 
@@ -642,8 +619,6 @@ public class GenericObjectService extends Service {
                 throw new DBConnectionException(pex.getCause().getMessage());
             }
             throw new EJBException(pex);
-        } catch (Exception ex) {
-            throw new EJBException(ex);
         }
     }
             
