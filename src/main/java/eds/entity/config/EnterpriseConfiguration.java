@@ -6,13 +6,19 @@
 package eds.entity.config;
 
 import eds.entity.audit.AuditedObject;
+import eds.entity.audit.AuditedObjectListener;
+import eds.entity.data.EnterpriseObject;
 import java.sql.Date;
+import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -26,13 +32,17 @@ import javax.persistence.TableGenerator;
 @Table(name="ENTERPRISE_CONFIG")
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 @TableGenerator(name="ENTERPRISE_CONFIG_SEQ",initialValue=1,allocationSize=10,table="SEQUENCE")
+@EntityListeners({
+    AuditedObjectListener.class
+})
 public abstract class EnterpriseConfiguration implements AuditedObject{
     
     protected long CONFIG_ID;
     protected java.sql.Date CONFIG_EFF_DATE;
     protected java.sql.Date CONFIG_END_DATE;
-    protected int SNO;
     
+    protected List<EnterpriseObject> OWNERS;
+
     /**
      * Previously these fields were from AuditedObject, but moved here as JPA
      * does not persist fields that are not belonging to a mapped entity - 
@@ -42,6 +52,8 @@ public abstract class EnterpriseConfiguration implements AuditedObject{
     protected String CHANGED_BY;
     protected java.sql.Date DATE_CREATED;
     protected String CREATED_BY;
+    
+    protected String VALUE;
 
     @Id @GeneratedValue(generator="ENTERPRISE_CONFIG_SEQ",strategy=GenerationType.TABLE) 
     public long getCONFIG_ID() {
@@ -66,14 +78,6 @@ public abstract class EnterpriseConfiguration implements AuditedObject{
 
     public void setCONFIG_END_DATE(Date CONFIG_END_DATE) {
         this.CONFIG_END_DATE = CONFIG_END_DATE;
-    }
-
-    public int getSNO() {
-        return SNO;
-    }
-
-    public void setSNO(int SNO) {
-        this.SNO = SNO;
     }
     
     @Override
@@ -115,5 +119,21 @@ public abstract class EnterpriseConfiguration implements AuditedObject{
     public void setCREATED_BY(String CREATED_BY) {
         this.CREATED_BY = CREATED_BY;
     }
+
+    public String getVALUE() {
+        return VALUE;
+    }
+
+    public void setVALUE(String VALUE) {
+        this.VALUE = VALUE;
+    }
     
+    @OneToMany(targetEntity=EnterpriseObject.class,mappedBy="OBJECTID")
+    public List<EnterpriseObject> getOWNERS() {
+        return OWNERS;
+    }
+
+    public void setOWNERS(List<EnterpriseObject> OWNERS) {
+        this.OWNERS = OWNERS;
+    }
 }

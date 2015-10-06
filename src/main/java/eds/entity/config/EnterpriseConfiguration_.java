@@ -7,6 +7,8 @@ package eds.entity.config;
 
 import eds.entity.audit.AuditedObject;
 import eds.entity.audit.AuditedObject_;
+import javax.persistence.metamodel.ListAttribute;
+import javax.persistence.metamodel.PluralAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
@@ -19,5 +21,7 @@ public class EnterpriseConfiguration_ extends AuditedObject_ {
     public static volatile SingularAttribute<EnterpriseConfiguration,Long> CONFIG_ID;
     public static volatile SingularAttribute<EnterpriseConfiguration,java.sql.Date>  CONFIG_EFF_DATE;
     public static volatile SingularAttribute<EnterpriseConfiguration,java.sql.Date> CONFIG_END_DATE;
-    public static volatile SingularAttribute<EnterpriseConfiguration,Integer> SNO;
+    public static volatile ListAttribute<EnterpriseConfiguration,Integer> OWNERS;
+    public static volatile SingularAttribute<EnterpriseConfiguration,String> VALUE;
+    
 }
