@@ -12,7 +12,7 @@ import javax.ejb.EJBException;
  *
  * @author LeeKiatHaw
  */
-public class EnterpriseObjectNotFoundException extends EJBException {
+public class EnterpriseObjectNotFoundException extends Exception {
 
     
     public EnterpriseObjectNotFoundException(Class<? extends EnterpriseObject> object) {

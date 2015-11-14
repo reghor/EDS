@@ -9,6 +9,7 @@ package eds.entity.data;
 import eds.entity.audit.AuditedObject;
 import eds.entity.audit.AuditedObjectListener;
 import java.sql.Date;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import static javax.persistence.ConstraintMode.NO_CONSTRAINT;
 import javax.persistence.DiscriminatorColumn;
@@ -186,4 +187,38 @@ public abstract class EnterpriseRelationship<S extends EnterpriseObject,T extend
     public EnterpriseRelationship(){
         
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + Objects.hashCode(this.SOURCE);
+        hash = 59 * hash + Objects.hashCode(this.TARGET);
+        hash = 59 * hash + this.REL_SEQUENCE;
+        hash = 59 * hash + Objects.hashCode(this.SOURCE_TYPE);
+        hash = 59 * hash + Objects.hashCode(this.TARGET_TYPE);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final EnterpriseRelationship<?, ?> other = (EnterpriseRelationship<?, ?>) obj;
+        if (!Objects.equals(this.SOURCE, other.SOURCE)) {
+            return false;
+        }
+        if (!Objects.equals(this.TARGET, other.TARGET)) {
+            return false;
+        }
+        if (this.REL_SEQUENCE != other.REL_SEQUENCE) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

@@ -10,8 +10,6 @@ import eds.component.data.EntityNotFoundException;
 import eds.entity.data.EnterpriseObject;
 import eds.entity.data.EnterpriseRelationship;
 import eds.entity.data.EnterpriseRelationship_;
-import java.util.ArrayList;
-import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.Stateless;

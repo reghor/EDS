@@ -22,7 +22,9 @@ import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
 import org.hibernate.exception.GenericJDBCException;
 import org.joda.time.DateTime;
 
@@ -575,7 +577,7 @@ public class GenericObjectService extends Service {
     public <T extends EnterpriseObject, R extends EnterpriseRelationship>
             List<T> getAllTargetObjectsFromSource(long sourceid, Class<R> r, Class<T> t) {
         try {
-            List<R> rList = this.getRelationshipsForSourceObject(sourceid, r);
+            /*List<R> rList = this.getRelationshipsForSourceObject(sourceid, r);
 
             List<T> tList = new ArrayList();
             for (R rInstance : rList) {
@@ -583,7 +585,23 @@ public class GenericObjectService extends Service {
             }
 
             return tList;
-
+            */
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<T> criteria = builder.createQuery(t);
+            
+            //You can have more than 1 root!
+            Root<T> fromTarget = criteria.from(t);
+            Root<R> fromRel = criteria.from(r);
+            
+            Join<R,T> relToSource = fromRel.join("TARGET",JoinType.INNER); //Default joint type is CROSS JOIN
+            
+            criteria.select(fromTarget).distinct(true);
+            criteria.where(builder.equal(fromRel.get(EnterpriseRelationship_.SOURCE),sourceid));
+            
+            List<T> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            return results;
         } catch (PersistenceException pex) {
             if (pex.getCause() instanceof GenericJDBCException) {
                 throw new DBConnectionException(pex.getCause().getMessage());
@@ -605,14 +623,30 @@ public class GenericObjectService extends Service {
     public <S extends EnterpriseObject, R extends EnterpriseRelationship>
             List<S> getAllSourceObjectsFromTarget(long targetid, Class<R> r, Class<S> s) {
         try {
-            List<R> rList = this.getRelationshipsForTargetObject(targetid, r);
+            /*List<R> rList = this.getRelationshipsForTargetObject(targetid, r);
 
             List<S> sList = new ArrayList();
             for (R rInstance : rList) { 
                 sList.add((S) rInstance.getSOURCE());
             }
 
-            return sList;
+            return sList;*/
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<S> criteria = builder.createQuery(s);
+            
+            //You can have more than 1 root!
+            Root<S> fromSource = criteria.from(s);
+            Root<R> fromRel = criteria.from(r);
+            
+            Join<R,S> relToSource = fromRel.join("SOURCE",JoinType.INNER); //Default joint type is CROSS JOIN
+            
+            criteria.select(fromSource).distinct(true);
+            criteria.where(builder.equal(fromRel.get(EnterpriseRelationship_.TARGET),targetid));
+            
+            List<S> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            return results;
 
         } catch (PersistenceException pex) {
             if (pex.getCause() instanceof GenericJDBCException) {
@@ -710,14 +744,19 @@ public class GenericObjectService extends Service {
     public <R extends EnterpriseRelationship, T extends EnterpriseObject> List<T> getAllTargetObjectsFromSources(List<Long> sourceids, Class<R> r, Class<T> t){
         try {
             CriteriaBuilder builder = em.getCriteriaBuilder();
-            CriteriaQuery<T> query = builder.createQuery(t);
-            Root<R> source = query.from(r);
+            CriteriaQuery<T> criteria = builder.createQuery(t);
             
-            Join<R,T> joinToTarget = source.join("TARGET");
+            //You can have more than 1 root!
+            Root<T> fromTarget = criteria.from(t);
+            Root<R> fromRel = criteria.from(r);
             
-            query.where(source.get(EnterpriseRelationship_.SOURCE).in(sourceids));
+            Join<R,T> relToSource = fromRel.join("TARGET",JoinType.INNER); //Default joint type is CROSS JOIN
             
-            List<T> results = em.createQuery(query).getResultList();
+            criteria.select(fromTarget).distinct(true);
+            criteria.where(fromRel.get(EnterpriseRelationship_.SOURCE).in(sourceids));
+            
+            List<T> results = em.createQuery(criteria)
+                    .getResultList();
             
             return results;
             
@@ -733,14 +772,19 @@ public class GenericObjectService extends Service {
     public <R extends EnterpriseRelationship, S extends EnterpriseObject> List<S> getAllSourceObjectsFromTargets(List<Long> targetids, Class<R> r, Class<S> s){
         try {
             CriteriaBuilder builder = em.getCriteriaBuilder();
-            CriteriaQuery<S> query = builder.createQuery(s);
-            Root<R> source = query.from(r);
+            CriteriaQuery<S> criteria = builder.createQuery(s);
             
-            Join<R,S> joinToTarget = source.join("SOURCE");
+            //You can have more than 1 root!
+            Root<S> fromSource = criteria.from(s);
+            Root<R> fromRel = criteria.from(r);
             
-            query.where(source.get(EnterpriseRelationship_.TARGET).in(targetids));
+            Join<R,S> relToSource = fromRel.join("SOURCE",JoinType.INNER); //Default joint type is CROSS JOIN
             
-            List<S> results = em.createQuery(query).getResultList();
+            criteria.select(fromSource).distinct(true);
+            criteria.where(fromRel.get(EnterpriseRelationship_.TARGET).in(targetids));
+            
+            List<S> results = em.createQuery(criteria)
+                    .getResultList();
             
             return results;
             
