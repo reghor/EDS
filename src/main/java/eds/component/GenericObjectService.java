@@ -593,11 +593,13 @@ public class GenericObjectService extends Service {
             Root<T> fromTarget = criteria.from(t);
             Root<R> fromRel = criteria.from(r);
             
-            Join<R,T> relToSource = fromRel.join("TARGET",JoinType.INNER); //Default joint type is CROSS JOIN
-            
-            criteria.select(fromTarget).distinct(true);
-            criteria.where(builder.equal(fromRel.get(EnterpriseRelationship_.SOURCE),sourceid));
-            
+            criteria.select(fromTarget);//.distinct(true);
+            criteria.where(
+                    builder.and(
+                        builder.equal(fromRel.get(EnterpriseRelationship_.SOURCE),sourceid),
+                        builder.equal(fromRel.get(EnterpriseRelationship_.TARGET), fromTarget.get(EnterpriseObject_.OBJECTID))
+                    )
+            );
             List<T> results = em.createQuery(criteria)
                     .getResultList();
             
@@ -638,10 +640,17 @@ public class GenericObjectService extends Service {
             Root<S> fromSource = criteria.from(s);
             Root<R> fromRel = criteria.from(r);
             
-            Join<R,S> relToSource = fromRel.join("SOURCE",JoinType.INNER); //Default joint type is CROSS JOIN
-            
-            criteria.select(fromSource).distinct(true);
-            criteria.where(builder.equal(fromRel.get(EnterpriseRelationship_.TARGET),targetid));
+            /*Join<R,S> relToSource = (Join<R,S>) fromRel.join(EnterpriseRelationship_.SOURCE,JoinType.INNER)
+                    .on(builder.equal(fromRel.get(EnterpriseRelationship_.SOURCE), 
+                            fromSource.get(EnterpriseObject_.OBJECTID))); //Default joint type is CROSS JOIN
+            */
+            criteria.select(fromSource);//.distinct(true);
+            criteria.where(
+                    builder.and(
+                        builder.equal(fromRel.get(EnterpriseRelationship_.TARGET),targetid),
+                        builder.equal(fromRel.get(EnterpriseRelationship_.SOURCE), fromSource.get(EnterpriseObject_.OBJECTID))
+                    )
+            );
             
             List<S> results = em.createQuery(criteria)
                     .getResultList();
@@ -750,10 +759,15 @@ public class GenericObjectService extends Service {
             Root<T> fromTarget = criteria.from(t);
             Root<R> fromRel = criteria.from(r);
             
-            Join<R,T> relToSource = fromRel.join("TARGET",JoinType.INNER); //Default joint type is CROSS JOIN
-            
-            criteria.select(fromTarget).distinct(true);
-            criteria.where(fromRel.get(EnterpriseRelationship_.SOURCE).in(sourceids));
+            criteria.select(fromTarget);//.distinct(true);
+            criteria.where(
+                    builder.and(
+                            fromRel.get(EnterpriseRelationship_.SOURCE).in(sourceids),
+                            builder.equal(
+                                    fromRel.get(EnterpriseRelationship_.TARGET), 
+                                    fromTarget.get(EnterpriseObject_.OBJECTID))
+                    )
+            );
             
             List<T> results = em.createQuery(criteria)
                     .getResultList();
@@ -778,10 +792,16 @@ public class GenericObjectService extends Service {
             Root<S> fromSource = criteria.from(s);
             Root<R> fromRel = criteria.from(r);
             
-            Join<R,S> relToSource = fromRel.join("SOURCE",JoinType.INNER); //Default joint type is CROSS JOIN
-            
             criteria.select(fromSource).distinct(true);
-            criteria.where(fromRel.get(EnterpriseRelationship_.TARGET).in(targetids));
+            criteria.where(
+                    builder.and(
+                            fromRel.get(EnterpriseRelationship_.TARGET).in(targetids),
+                            builder.equal(
+                                    fromRel.get(EnterpriseRelationship_.SOURCE),
+                                    fromSource.get(EnterpriseObject_.OBJECTID)
+                            )
+                    )
+            );
             
             List<S> results = em.createQuery(criteria)
                     .getResultList();
