@@ -5,7 +5,7 @@
  */
 package eds.component.config;
 
-import eds.component.Service;
+import eds.component.DBService;
 import eds.component.data.DBConnectionException;
 import eds.entity.config.EnterpriseConfiguration;
 import eds.entity.config.EnterpriseConfiguration_;
@@ -28,7 +28,7 @@ import org.joda.time.DateTime;
  * @author LeeKiatHaw
  */
 @Stateless
-public class GenericConfigService extends Service{
+public class GenericConfigService extends DBService{
     
     /**
      * Gets a dump of an entire config list.

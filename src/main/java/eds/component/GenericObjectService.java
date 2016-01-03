@@ -33,7 +33,7 @@ import org.joda.time.DateTime;
  * @author LeeKiatHaw
  */
 @Stateless
-public class GenericObjectService extends Service {
+public class GenericObjectService extends DBService {
 
     /**
      * Inject an instance of EntityManager based on config in persistence.xml.

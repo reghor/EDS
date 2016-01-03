@@ -25,7 +25,7 @@ import org.hibernate.exception.GenericJDBCException;
  * @author LeeKiatHaw
  */
 @Stateless
-public class StaticObjectService extends Service {
+public class StaticObjectService extends DBService {
 
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public List<Class> getAllEntities() throws DBConnectionException {

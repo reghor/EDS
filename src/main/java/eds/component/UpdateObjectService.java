@@ -7,6 +7,8 @@ package eds.component;
 
 import eds.component.data.DBConnectionException;
 import eds.component.data.EntityNotFoundException;
+import eds.entity.data.EnterpriseData;
+import eds.entity.data.EnterpriseData_;
 import eds.entity.data.EnterpriseObject;
 import eds.entity.data.EnterpriseRelationship;
 import eds.entity.data.EnterpriseRelationship_;
@@ -26,13 +28,13 @@ import org.hibernate.exception.GenericJDBCException;
  * @author LeeKiatHaw
  */
 @Stateless
-public class UpdateObjectService extends Service {
+public class UpdateObjectService extends DBService {
     
     @EJB
     private GenericObjectService GenericObjectService;
     
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void deleteObjectAndRelationships(long objectId) throws EntityNotFoundException{
+    public void deleteObjectDataAndRelationships(long objectId) throws EntityNotFoundException{
         try {
             //Get the object
             EnterpriseObject object = em.find(EnterpriseObject.class, objectId);
@@ -47,8 +49,11 @@ public class UpdateObjectService extends Service {
             //Delete all relationships first
             //How to do a mass delete here?
             //em.remove(em.contains(allRel) ? allRel : em.merge(allRel));
+            deleteAllEnterpriseDataByType(objectId,EnterpriseData.class);
             deleteRelationshipBySource(objectId,EnterpriseRelationship.class);
             deleteRelationshipByTarget(objectId,EnterpriseRelationship.class);
+            
+            //Leave all EnterpriseData?
             
             //and remove the object itself
             em.remove(em.contains(object) ? object : em.merge(object));
@@ -102,4 +107,47 @@ public class UpdateObjectService extends Service {
             throw new EJBException(pex);
         }
     }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public <D extends EnterpriseData> int deleteAllEnterpriseDataByType(long ownerId,Class<D> d) {
+        try {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaDelete<D> delCriteria = builder.createCriteriaDelete(d);
+            Root<D> root = delCriteria.from(d);
+            
+            delCriteria.where(builder.equal(root.get(EnterpriseData_.OWNER), ownerId));
+            
+            int result = em.createQuery(delCriteria).executeUpdate();
+            
+            return result;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw new EJBException(pex);
+        }
+    }
+    
+    /* might not need
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public int deleteAllEnterpriseData(long ownerId) {
+        try {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaDelete<EnterpriseData> delCriteria = builder.createCriteriaDelete(EnterpriseData.class);
+            Root<EnterpriseData> root = delCriteria.from(EnterpriseData.class);
+            
+            delCriteria.where(builder.equal(root.get(EnterpriseData_.OWNER), ownerId));
+            
+            int result = em.createQuery(delCriteria).executeUpdate();
+            
+            return result;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw new EJBException(pex);
+        }
+    }*/
 }

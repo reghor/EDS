@@ -11,12 +11,15 @@ import eds.entity.audit.AuditedObjectListener;
 import java.sql.Date;
 import java.util.Objects;
 import javax.persistence.CascadeType;
+import static javax.persistence.ConstraintMode.NO_CONSTRAINT;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -57,7 +60,10 @@ public abstract class EnterpriseData<T extends EnterpriseObject> implements Audi
     @Id @ManyToOne(fetch=FetchType.EAGER,//Actually, it won't affect performance much as each ED only has 1 EO.
             cascade = CascadeType.ALL, //To resolve the issue of null column when merging
             optional=false,
-            targetEntity=EnterpriseObject.class) 
+            targetEntity=EnterpriseObject.class)
+    @JoinColumn(name="OWNER",
+            referencedColumnName="OBJECTID",
+            foreignKey=@ForeignKey(name="OWNER",value=NO_CONSTRAINT))
     public T getOWNER() {
         return OWNER;
     }
