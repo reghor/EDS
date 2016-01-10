@@ -576,20 +576,11 @@ public class GenericObjectService extends DBService {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public <T extends EnterpriseObject, R extends EnterpriseRelationship>
             List<T> getAllTargetObjectsFromSource(long sourceid, Class<R> r, Class<T> t) {
-        try {
-            /*List<R> rList = this.getRelationshipsForSourceObject(sourceid, r);
-
-            List<T> tList = new ArrayList();
-            for (R rInstance : rList) {
-                tList.add((T) rInstance.getTARGET());
-            }
-
-            return tList;
-            */
+        return getAllTargetObjectsFromSource(sourceid,r,t,0,Integer.MAX_VALUE);
+        /*try {
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<T> criteria = builder.createQuery(t);
             
-            //You can have more than 1 root!
             Root<T> fromTarget = criteria.from(t);
             Root<R> fromRel = criteria.from(r);
             
@@ -601,6 +592,37 @@ public class GenericObjectService extends DBService {
                     )
             );
             List<T> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            return results;
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw new EJBException(pex);
+        } */
+    }
+            
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <T extends EnterpriseObject, R extends EnterpriseRelationship>
+            List<T> getAllTargetObjectsFromSource(long sourceid, Class<R> r, Class<T> t, int startIndex, int limit) {
+        try {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<T> criteria = builder.createQuery(t);
+            
+            Root<T> fromTarget = criteria.from(t);
+            Root<R> fromRel = criteria.from(r);
+            
+            criteria.select(fromTarget);//.distinct(true);
+            criteria.where(
+                    builder.and(
+                        builder.equal(fromRel.get(EnterpriseRelationship_.SOURCE),sourceid),
+                        builder.equal(fromRel.get(EnterpriseRelationship_.TARGET), fromTarget.get(EnterpriseObject_.OBJECTID))
+                    )
+            );
+            List<T> results = em.createQuery(criteria)
+                    .setFirstResult(startIndex)
+                    .setMaxResults(limit)
                     .getResultList();
             
             return results;
@@ -624,26 +646,14 @@ public class GenericObjectService extends DBService {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public <S extends EnterpriseObject, R extends EnterpriseRelationship>
             List<S> getAllSourceObjectsFromTarget(long targetid, Class<R> r, Class<S> s) {
-        try {
-            /*List<R> rList = this.getRelationshipsForTargetObject(targetid, r);
-
-            List<S> sList = new ArrayList();
-            for (R rInstance : rList) { 
-                sList.add((S) rInstance.getSOURCE());
-            }
-
-            return sList;*/
+        return getAllSourceObjectsFromTarget(targetid,r,s,0,Integer.MAX_VALUE);
+        /*try {
             CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<S> criteria = builder.createQuery(s);
             
-            //You can have more than 1 root!
             Root<S> fromSource = criteria.from(s);
             Root<R> fromRel = criteria.from(r);
             
-            /*Join<R,S> relToSource = (Join<R,S>) fromRel.join(EnterpriseRelationship_.SOURCE,JoinType.INNER)
-                    .on(builder.equal(fromRel.get(EnterpriseRelationship_.SOURCE), 
-                            fromSource.get(EnterpriseObject_.OBJECTID))); //Default joint type is CROSS JOIN
-            */
             criteria.select(fromSource);//.distinct(true);
             criteria.where(
                     builder.and(
@@ -653,6 +663,39 @@ public class GenericObjectService extends DBService {
             );
             
             List<S> results = em.createQuery(criteria)
+                    .getResultList();
+            
+            return results;
+
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw new EJBException(pex);
+        }*/
+    }
+            
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <S extends EnterpriseObject, R extends EnterpriseRelationship>
+            List<S> getAllSourceObjectsFromTarget(long targetid, Class<R> r, Class<S> s, int startIndex, int limit) {
+        try {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<S> criteria = builder.createQuery(s);
+            
+            Root<S> fromSource = criteria.from(s);
+            Root<R> fromRel = criteria.from(r);
+            
+            criteria.select(fromSource);//.distinct(true);
+            criteria.where(
+                    builder.and(
+                        builder.equal(fromRel.get(EnterpriseRelationship_.TARGET),targetid),
+                        builder.equal(fromRel.get(EnterpriseRelationship_.SOURCE), fromSource.get(EnterpriseObject_.OBJECTID))
+                    )
+            );
+            
+            List<S> results = em.createQuery(criteria)
+                    .setFirstResult(startIndex)
+                    .setMaxResults(limit)
                     .getResultList();
             
             return results;

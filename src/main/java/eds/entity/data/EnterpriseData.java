@@ -36,7 +36,7 @@ import javax.persistence.Table;
     AuditedObjectListener.class,
     EnterpriseDataListener.class
 })
-public abstract class EnterpriseData<T extends EnterpriseObject> implements AuditedObject{
+public abstract class EnterpriseData<T extends EnterpriseObject> implements AuditedObject, Comparable<EnterpriseData> {
     
     protected T OWNER;
     protected java.sql.Date START_DATE;
@@ -58,7 +58,10 @@ public abstract class EnterpriseData<T extends EnterpriseObject> implements Audi
      */
     //@Id @ManyToOne(fetch=FetchType.LAZY) //For performance's sake
     @Id @ManyToOne(fetch=FetchType.EAGER,//Actually, it won't affect performance much as each ED only has 1 EO.
-            cascade = CascadeType.ALL, //To resolve the issue of null column when merging
+            cascade = {
+                CascadeType.MERGE,
+                CascadeType.REFRESH
+            }, //To resolve the issue of null column when merging
             optional=false,
             targetEntity=EnterpriseObject.class)
     @JoinColumn(name="OWNER",
@@ -195,6 +198,23 @@ public abstract class EnterpriseData<T extends EnterpriseObject> implements Audi
         }
         return true;
     }
+    
+    @Override
+    public int compareTo(EnterpriseData o) {
+        int compareOwner = this.OWNER.compareTo(o.OWNER);
+        if(compareOwner != 0)
+            return compareOwner;
+    
+        int compareStart = this.START_DATE.compareTo(o.START_DATE);
+        if(compareStart != 0)
+            return compareStart;
+        
+        int compareEnd = this.END_DATE.compareTo(o.END_DATE);
+        if(compareEnd != 0)
+            return compareEnd;
+        
+        return this.SNO - o.SNO;
+}
     
     
 }
