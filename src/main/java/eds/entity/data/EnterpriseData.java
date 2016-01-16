@@ -125,6 +125,16 @@ public abstract class EnterpriseData<T extends EnterpriseObject> implements Audi
      */
     public abstract Object generateKey();
     
+    /**
+     * Provides an HTML-friendly name that can be used as an identifier in the DOM
+     * structure.
+     * - no spaces
+     * - no trailing spaces
+     * 
+     * @return 
+     */
+    public abstract String getHTMLName();
+    
     @Override
     public Date getDATE_CREATED() {
         return DATE_CREATED;

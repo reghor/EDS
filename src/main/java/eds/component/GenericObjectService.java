@@ -858,4 +858,28 @@ public class GenericObjectService extends DBService {
             throw new EJBException(pex);
         }
     }
+    
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public <D extends EnterpriseData> int getHighestSNO(Class<D> data, long objectId){
+        try {
+            CriteriaBuilder builder = em.getCriteriaBuilder();
+            CriteriaQuery<Integer> criteria = builder.createQuery(Integer.class);
+            
+            Root<D> fromData = criteria.from(data);
+            criteria.select(builder.max(fromData.get(EnterpriseData_.SNO)));
+            
+            criteria.where(builder.equal(fromData.get(EnterpriseData_.OWNER), objectId));
+            
+            Integer result = em.createQuery(criteria)
+                    .getSingleResult();
+            
+            return result;
+            
+        } catch (PersistenceException pex) {
+            if (pex.getCause() instanceof GenericJDBCException) {
+                throw new DBConnectionException(pex.getCause().getMessage());
+            }
+            throw new EJBException(pex);
+        }
+    }
 }
