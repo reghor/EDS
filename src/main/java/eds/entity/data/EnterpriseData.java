@@ -22,6 +22,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  *
@@ -133,7 +134,7 @@ public abstract class EnterpriseData<T extends EnterpriseObject> implements Audi
      * 
      * @return 
      */
-    public abstract String getHTMLName();
+    public abstract String HTMLName();
     
     @Override
     public Date getDATE_CREATED() {

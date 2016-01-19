@@ -873,7 +873,7 @@ public class GenericObjectService extends DBService {
             Integer result = em.createQuery(criteria)
                     .getSingleResult();
             
-            return result;
+            return (result == null) ? -1 : result;
             
         } catch (PersistenceException pex) {
             if (pex.getCause() instanceof GenericJDBCException) {
