@@ -6,6 +6,7 @@
 package eds.component.data;
 
 import eds.entity.data.EnterpriseData;
+import javax.ejb.ApplicationException;
 
 /**
  * By 2015 Apr, I had started to realize that I created a separate Exception type
@@ -19,6 +20,7 @@ import eds.entity.data.EnterpriseData;
  * 
  * @author LeeKiatHaw
  */
+@ApplicationException(rollback = true)
 public class MissingOwnerException extends Exception{
     
     public MissingOwnerException(EnterpriseData d){

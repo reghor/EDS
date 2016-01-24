@@ -5,10 +5,13 @@
  */
 package eds.component.data;
 
+import javax.ejb.ApplicationException;
+
 /**
  *
  * @author LeeKiatHaw
  */
+@ApplicationException(rollback = true)
 public class DataValidationException extends Exception {
 
     public DataValidationException(String message) {

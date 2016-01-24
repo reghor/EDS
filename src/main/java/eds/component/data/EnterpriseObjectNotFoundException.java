@@ -6,12 +6,14 @@
 package eds.component.data;
 
 import eds.entity.data.EnterpriseObject;
+import javax.ejb.ApplicationException;
 import javax.ejb.EJBException;
 
 /**
  *
  * @author LeeKiatHaw
  */
+@ApplicationException(rollback = true)
 public class EnterpriseObjectNotFoundException extends Exception {
 
     

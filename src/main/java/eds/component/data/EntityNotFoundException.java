@@ -6,12 +6,14 @@
 package eds.component.data;
 
 import eds.entity.data.EnterpriseObject;
+import javax.ejb.ApplicationException;
 
 /**
  * Usually thrown in creation of relationships where the SOURCE or TARGET 
  * entity is not found
  * @author LeeKiatHaw
  */
+@ApplicationException(rollback = true)
 public class EntityNotFoundException extends Exception{
 
     public EntityNotFoundException(String message) {

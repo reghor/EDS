@@ -5,10 +5,13 @@
  */
 package eds.component.data;
 
+import javax.ejb.ApplicationException;
+
 /**
  *
  * @author LeeKiatHaw
  */
+@ApplicationException(rollback = true)
 public class IncompleteDataException extends Exception{
 
     public IncompleteDataException(String message) {

@@ -5,14 +5,15 @@
  */
 package eds.component.data;
 
-import eds.entity.data.EnterpriseObject;
 import eds.entity.data.EnterpriseRelationship;
+import javax.ejb.ApplicationException;
 
 /**
  *
  * @author LeeKiatHaw
  * @param <R>
  */
+@ApplicationException(rollback = true)
 public class RelationshipExistsException extends Exception {
     /*public RelationshipExistsException(String message) {
         super(message);
